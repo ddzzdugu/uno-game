@@ -77,8 +77,8 @@
   cursor: default;
   transition: none;
 }
-.deck-l1 { transform: rotate(-5deg); z-index: 0; }
-.deck-l2 { transform: rotate(4deg) translate(3px, 2px); z-index: 0; }
+.deck-l1 { transform: rotate(10deg);  z-index: 0; }
+.deck-l2 { transform: rotate(-12deg); z-index: 0; }
 
 #draw-pile {
   position: relative;
