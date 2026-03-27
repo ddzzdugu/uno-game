@@ -92,9 +92,9 @@ const _flyCard = ({ classList, html, from, to, onLand }) => {
   fly.style.width  = '';   // clear any previous inline override
   fly.style.height = '';
 
-  // Measure the card's natural CSS size
+  // Measure the card's natural CSS size (display:flex matches .card's CSS)
   fly.style.transition = 'none';
-  fly.style.display    = 'block';
+  fly.style.display    = 'flex';
   fly.style.transform  = 'translate(0,0)';
   const w = fly.offsetWidth;
   const h = fly.offsetHeight;
@@ -119,7 +119,7 @@ const _flyCard = ({ classList, html, from, to, onLand }) => {
   fly.style.transition = 'transform 0.6s cubic-bezier(.22,1,.36,1)';
   fly.style.transform  = `translate(${dx}px,${dy}px) rotate(${rotation}deg) scale(1.12)`;
 
-  setTimeout(() => { fly.style.display = 'none'; onLand(); }, 650);
+  setTimeout(() => { fly.style.display = ''; onLand(); }, 650);
 };
 
 // ── Pulse ring ────────────────────────────────────────────────
