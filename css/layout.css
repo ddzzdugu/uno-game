@@ -70,26 +70,29 @@
   height: var(--card-h);
 }
 
-.deck-layer {
+.deck-layer,
+#draw-pile {
   position: absolute;
   top: 0; left: 0;
+}
+
+.deck-layer {
   pointer-events: none;
   cursor: default;
   transition: none;
 }
-.deck-l1 { transform: rotate(10deg);  z-index: 0; }
-.deck-l2 { transform: rotate(-12deg); z-index: 0; }
+.deck-l2 { transform: rotate(-13deg); z-index: 1; }
+.deck-l1 { transform: rotate(9deg);   z-index: 2; }
 
 #draw-pile {
-  position: relative;
-  z-index: 1;
+  transform: rotate(-3deg);
+  z-index: 3;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
 #draw-pile:hover {
-  transform: translateY(-6px) scale(1.05);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 24px var(--primary);
+  transform: rotate(-3deg) translateY(-6px) scale(1.05);
 }
 
 /* Discard pile — sized container for stacked cards */
