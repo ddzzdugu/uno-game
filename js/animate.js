@@ -4,6 +4,7 @@
 
 import { gs } from './state.js';
 import { sndWhoosh } from './audio.js';
+import { makeCardEl } from './render.js';
 
 const COLOR_HEX = {
   red: '#c94455', blue: '#4a7ec0', green: '#3d9b5a',
@@ -53,9 +54,11 @@ export const animateAIPlay = (playerIdx, cardId, onDone) => {
   const destRect = destEl.getBoundingClientRect();
   const card     = gs.hands[playerIdx][cardIdx];
 
+  const faceEl = makeCardEl(card, { faceDown: false, humanPlayable: false });
+  faceEl.classList.remove('disabled');
   _flyCard({
-    classList: 'card back',
-    html:      '<div class="card-back-inner"><div class="back-oval"><span>UNO</span></div></div>',
+    classList: faceEl.className,
+    html:      faceEl.innerHTML,
     from:      srcRect,
     to:        destRect,
     onLand:    () => { if (card) spawnPulseRing(destEl, card); onDone(); },
