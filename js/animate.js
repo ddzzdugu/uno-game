@@ -122,7 +122,7 @@ const _flyCard = ({ classList, html, from, to, onLand }) => {
   fly.style.transition = 'transform 0.6s cubic-bezier(.22,1,.36,1)';
   fly.style.transform  = `translate(${dx}px,${dy}px) rotate(${rotation}deg) scale(1.12)`;
 
-  setTimeout(() => { fly.style.display = ''; onLand(); }, 650);
+  setTimeout(() => { fly.style.display = 'none'; onLand(); }, 650);
 };
 
 // ── Pulse ring ────────────────────────────────────────────────
