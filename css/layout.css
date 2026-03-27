@@ -70,13 +70,13 @@
   height: var(--card-h);
 }
 
-.deck-layer,
-#draw-pile {
+#draw-pile-stack .deck-layer,
+#draw-pile-stack #draw-pile {
   position: absolute;
   top: 0; left: 0;
 }
 
-.deck-layer {
+#draw-pile-stack .deck-layer {
   pointer-events: none;
   cursor: default;
   transition: none;
