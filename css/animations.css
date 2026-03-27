@@ -18,6 +18,13 @@
   100% { transform: scale(2.4); opacity: 0; }
 }
 
+/* ---------- Flying card (shared animation element) ---------- */
+#anim-card {
+  position: fixed;
+  z-index: 500;
+  pointer-events: none;
+}
+
 /* ---------- Active name-tag pulse ---------- */
 @keyframes name-tag-pulse {
   0%, 100% { box-shadow: 0 0 10px 3px currentColor; transform: scale(1); }

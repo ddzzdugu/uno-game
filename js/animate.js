@@ -107,7 +107,7 @@ const _flyCard = ({ classList, html, from, to, onLand }) => {
     width:      `${from.width}px`,
     height:     `${from.height}px`,
     transform:  'none',
-    transition: 'left .3s cubic-bezier(.22,1,.36,1), top .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1)',
+    transition: 'left .55s cubic-bezier(.22,1,.36,1), top .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1)',
   });
 
   sndWhoosh();
@@ -118,7 +118,7 @@ const _flyCard = ({ classList, html, from, to, onLand }) => {
     fly.style.transform = `rotate(${rotation}deg) scale(1.08)`;
   }));
 
-  setTimeout(() => { fly.style.display = 'none'; onLand(); }, 330);
+  setTimeout(() => { fly.style.display = 'none'; onLand(); }, 580);
 };
 
 // ── Pulse ring ────────────────────────────────────────────────
