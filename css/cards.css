@@ -150,17 +150,10 @@
   text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
 }
 
-/* ── Opponent hand (smaller face-down cards) ── */
-.opponent-hand .card {
-  width: 46px;
-  height: 70px;
-  border-radius: 7px;
-  border-width: 2px;
-}
-.opponent-hand .card-back-inner {
-  border-radius: 5px;
-}
-.opponent-hand .back-oval span { font-size: 10px; }
+/* ── Opponent hand — same card size as player, overlapping ── */
+.opponent-hand .card          { margin: 0 -14px; }
+.opponent-hand .card:first-child { margin-left: 0; }
+.opponent-hand .card:last-child  { margin-right: 0; }
 
 /* ── Playable / disabled states ── */
 .card.playable:hover {

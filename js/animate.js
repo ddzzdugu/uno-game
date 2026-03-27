@@ -56,7 +56,7 @@ export const animateAIPlay = (playerIdx, cardId, onDone) => {
   _flyCard({
     classList: 'card back',
     html:      '<div class="card-back-inner"><div class="back-oval"><span>UNO</span></div></div>',
-    from:      { ...srcRect, width: Math.min(srcRect.width, 100), height: Math.min(srcRect.height, 150) },
+    from:      srcRect,
     to:        destRect,
     onLand:    () => { if (card) spawnPulseRing(destEl, card); onDone(); },
   });
@@ -72,51 +72,49 @@ export const animateDraw = (toIdx, onDone) => {
   const destEl = document.getElementById(`hand-${toIdx}`);
   if (!srcEl || !destEl) { onDone(); return; }
 
-  const srcRect  = srcEl.getBoundingClientRect();
-  const destRect = destEl.getBoundingClientRect();
-
-  // Land near the right edge of the hand (where the new card will appear)
-  const destW = toIdx === 0 ? srcRect.width  : Math.min(srcRect.width,  46);
-  const destH = toIdx === 0 ? srcRect.height : Math.min(srcRect.height, 70);
-  const to = {
-    left:   destRect.right - destW - 4,
-    top:    destRect.top + (destRect.height - destH) / 2,
-    width:  destW,
-    height: destH,
-  };
-
   _flyCard({
     classList: 'card back',
     html:      '<div class="card-back-inner"><div class="back-oval"><span>UNO</span></div></div>',
-    from:      { left: srcRect.left, top: srcRect.top, width: srcRect.width, height: srcRect.height },
-    to,
+    from:      srcEl.getBoundingClientRect(),
+    to:        destEl.getBoundingClientRect(),
     onLand:    onDone,
   });
 };
 
-/** Internal: move the shared #anim-card element from `from` rect to `to` rect */
+/** Internal: move the shared #anim-card element from `from` rect to `to` rect.
+ *  The flying card always renders at its natural CSS size (--card-w × --card-h)
+ *  and is centered over both the source and destination rectangles.
+ */
 const _flyCard = ({ classList, html, from, to, onLand }) => {
   const fly = document.getElementById('anim-card');
-  fly.className = classList;
-  fly.innerHTML = html;
+  fly.className    = classList;
+  fly.innerHTML    = html;
+  fly.style.width  = '';   // clear any previous inline override
+  fly.style.height = '';
 
-  const dx       = to.left - from.left;
-  const dy       = to.top  - from.top;
-  const rotation = (Math.random() * 30 - 15).toFixed(1);
-
-  // Step 1 — place at source with no transition
+  // Measure the card's natural CSS size
   fly.style.transition = 'none';
   fly.style.display    = 'block';
-  fly.style.left       = `${from.left}px`;
-  fly.style.top        = `${from.top}px`;
-  fly.style.width      = `${from.width}px`;
-  fly.style.height     = `${from.height}px`;
-  fly.style.transform  = 'translate(0,0) scale(1)';
+  fly.style.transform  = 'translate(0,0)';
+  const w = fly.offsetWidth;
+  const h = fly.offsetHeight;
+
+  // Place centered over the source
+  const startX = from.left + from.width  / 2 - w / 2;
+  const startY = from.top  + from.height / 2 - h / 2;
+  fly.style.left = `${startX}px`;
+  fly.style.top  = `${startY}px`;
 
   sndWhoosh();
 
-  // Step 2 — force reflow so the browser commits the initial position,
-  // then start the transform transition to the destination
+  // Compute translate delta to center over the destination
+  const endX     = to.left + to.width  / 2 - w / 2;
+  const endY     = to.top  + to.height / 2 - h / 2;
+  const dx       = endX - startX;
+  const dy       = endY - startY;
+  const rotation = (Math.random() * 30 - 15).toFixed(1);
+
+  // Force reflow → browser commits initial pos → then start transition
   fly.getBoundingClientRect();
   fly.style.transition = 'transform 0.6s cubic-bezier(.22,1,.36,1)';
   fly.style.transform  = `translate(${dx}px,${dy}px) rotate(${rotation}deg) scale(1.12)`;
