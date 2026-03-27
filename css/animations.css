@@ -18,6 +18,18 @@
   100% { transform: scale(2.4); opacity: 0; }
 }
 
+/* ---------- Active name-tag pulse ---------- */
+@keyframes name-tag-pulse {
+  0%, 100% { box-shadow: 0 0 10px 3px currentColor; transform: scale(1); }
+  50%      { box-shadow: 0 0 26px 8px currentColor; transform: scale(1.09); }
+}
+
+/* ---------- "Your turn" banner flash ---------- */
+@keyframes your-turn-flash {
+  from { opacity: 0.6; letter-spacing: 2px; }
+  to   { opacity: 1;   letter-spacing: 4px; text-shadow: 0 0 14px var(--accent); }
+}
+
 /* ---------- UNO button pulse ---------- */
 @keyframes uno-pulse {
   from { transform: scale(1);    box-shadow: 0 4px 20px rgba(239,68,68,0.7); }

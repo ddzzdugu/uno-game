@@ -83,12 +83,26 @@ export const renderHand = (playerIdx, handElId, faceDown) => {
 export const renderDiscardTop = () => {
   const container = document.getElementById('discard-top');
   container.innerHTML = '';
-  const card = topCard();
-  if (!card) return;
+  if (!gs.discardPile.length) return;
 
-  const el = makeCardEl(card, { faceDown: false, humanPlayable: false });
-  el.classList.remove('disabled');
-  container.appendChild(el);
+  // Show up to 3 cards from the pile, rotated to look messy
+  const total   = gs.discardPile.length;
+  const numShow = Math.min(total, 3);
+  const rotations = [-13, 9, -3]; // [3rd from top, 2nd from top, top]
+  const rots = rotations.slice(rotations.length - numShow);
+
+  for (let i = 0; i < numShow; i++) {
+    const card = gs.discardPile[total - numShow + i];
+    const el   = makeCardEl(card, { faceDown: false, humanPlayable: false });
+    el.classList.remove('disabled');
+    el.style.position     = 'absolute';
+    el.style.top          = '0';
+    el.style.left         = '0';
+    el.style.zIndex       = String(i + 1);
+    el.style.transform    = `rotate(${rots[i]}deg)`;
+    if (i < numShow - 1) el.style.pointerEvents = 'none';
+    container.appendChild(el);
+  }
 
   document.getElementById('color-indicator').style.background =
     COLOR_HEX[topColor()] ?? '#a855f7';
@@ -112,6 +126,9 @@ export const updateNameTagHighlights = () => {
     const tag = document.getElementById(`nametag-${i}`);
     if (tag) tag.classList.toggle('active-turn', i === gs.currentPlayer && gs.phase === 'playing');
   }
+  document.getElementById('player-zone').classList.toggle(
+    'your-turn', gs.currentPlayer === 0 && gs.phase === 'playing'
+  );
   document.getElementById('direction-indicator').textContent =
     gs.direction === 1 ? '↻' : '↺';
 };

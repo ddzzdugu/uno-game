@@ -63,7 +63,26 @@
   letter-spacing: 1px;
 }
 
+/* Draw pile — 3D deck stack */
+#draw-pile-stack {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+}
+
+.deck-layer {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+  cursor: default;
+  transition: none;
+}
+.deck-l1 { transform: rotate(-5deg); z-index: 0; }
+.deck-l2 { transform: rotate(4deg) translate(3px, 2px); z-index: 0; }
+
 #draw-pile {
+  position: relative;
+  z-index: 1;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
 }
@@ -71,6 +90,13 @@
 #draw-pile:hover {
   transform: translateY(-6px) scale(1.05);
   box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 24px var(--primary);
+}
+
+/* Discard pile — sized container for stacked cards */
+#discard-top {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
 }
 
 #color-indicator {
@@ -99,8 +125,19 @@
 }
 
 .name-tag.active-turn {
-  box-shadow: 0 0 16px 4px currentColor;
-  background: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.18);
+  animation: name-tag-pulse 1.0s ease-in-out infinite;
+}
+
+/* "YOUR TURN" banner above the player's hand */
+#player-zone.your-turn::before {
+  content: '▶  YOUR TURN  ◀';
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--accent);
+  animation: your-turn-flash 0.65s ease-in-out infinite alternate;
 }
 
 .card-count-badge {
