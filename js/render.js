@@ -5,6 +5,8 @@
 import { gs } from './state.js';
 import { isHumanPlayable, topCard, topColor } from './rules.js';
 
+const PLAYER_COLORS = ['#a855f7', '#c94455', '#3d9b5a'];
+
 const COLOR_HEX = {
   red: '#c94455', blue: '#4a7ec0', green: '#3d9b5a',
   yellow: '#d4b830', wild: '#1a1a1a',
@@ -128,11 +130,19 @@ export const updateNameTagHighlights = () => {
     const tag  = document.getElementById(`nametag-${i}`);
     const zone = document.getElementById(i === 0 ? 'player-zone' : `zone-${i}`);
     if (tag)  tag.classList.toggle('active-turn', active);
-    if (zone) zone.classList.toggle('active-zone', active);
+    if (zone) {
+      zone.classList.toggle('active-zone', active);
+      // Set zone color so ::after "thinking…" inherits it via currentColor
+      if (active && i > 0) zone.style.color = PLAYER_COLORS[i];
+      else if (!active && i > 0) zone.style.color = '';
+    }
   }
   document.getElementById('player-zone').classList.toggle(
     'your-turn', gs.currentPlayer === 0 && isPlaying
   );
+  // Tint status message with the current player's color
+  document.getElementById('status-msg').style.color =
+    isPlaying ? PLAYER_COLORS[gs.currentPlayer] : 'var(--accent)';
   document.getElementById('direction-indicator').textContent =
     gs.direction === 1 ? '↻' : '↺';
 };

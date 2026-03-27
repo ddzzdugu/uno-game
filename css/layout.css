@@ -137,9 +137,11 @@
   content: '▶  YOUR TURN  ◀';
   display: block;
   text-align: center;
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 900;
-  color: var(--accent);
+  color: #a855f7;
+  text-shadow: 0 0 18px #a855f7;
+  letter-spacing: 2px;
   animation: your-turn-flash 0.65s ease-in-out infinite alternate;
 }
 
@@ -172,9 +174,10 @@
   content: 'thinking…';
   display: block;
   text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.55);
+  font-size: 14px;
+  font-weight: 800;
+  color: currentColor;
+  text-shadow: 0 0 12px currentColor;
   animation: your-turn-flash 0.8s ease-in-out infinite alternate;
   margin-top: 4px;
 }
@@ -218,10 +221,12 @@
 }
 
 #status-msg {
-  font-size: 15px;
-  font-weight: 700;
-  min-height: 22px;
+  font-size: 20px;
+  font-weight: 900;
+  min-height: 28px;
   text-align: center;
   color: var(--accent);
-  text-shadow: 0 0 10px rgba(245,158,11,0.5);
+  text-shadow: 0 0 16px currentColor;
+  letter-spacing: 0.5px;
+  transition: color 0.3s;
 }

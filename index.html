@@ -21,7 +21,7 @@
   <div class="opponents-row">
 
     <div class="opponent-zone" id="zone-1">
-      <div class="name-tag" id="nametag-1" style="color:#ef4444; border-color:#ef4444;">
+      <div class="name-tag" id="nametag-1" style="color:#c94455; border-color:#c94455;">
         <span>🤖 Alex</span>
         <span class="card-count-badge" id="badge-1">7</span>
       </div>
@@ -31,11 +31,10 @@
     <div class="center-info">
       <div id="direction-indicator">↻</div>
       <div id="status-msg">Starting…</div>
-      <button id="stop-btn" onclick="stopGame()">■ Stop</button>
     </div>
 
     <div class="opponent-zone" id="zone-2">
-      <div class="name-tag" id="nametag-2" style="color:#22c55e; border-color:#22c55e;">
+      <div class="name-tag" id="nametag-2" style="color:#3d9b5a; border-color:#3d9b5a;">
         <span>🤖 Sam</span>
         <span class="card-count-badge" id="badge-2">7</span>
       </div>
@@ -103,6 +102,9 @@
 
 <!-- Flying card used for animations -->
 <div id="anim-card" class="card" style="display:none;"></div>
+
+<!-- Side stop button -->
+<button id="stop-btn" onclick="stopGame()">■ Stop</button>
 
 <script type="module" src="js/main.js"></script>
 </body>
