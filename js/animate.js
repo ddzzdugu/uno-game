@@ -99,26 +99,29 @@ const _flyCard = ({ classList, html, from, to, onLand }) => {
   const fly = document.getElementById('anim-card');
   fly.className = classList;
   fly.innerHTML = html;
-  const rotation = (Math.random() * 40 - 20).toFixed(1);
-  Object.assign(fly.style, {
-    display:    'block',
-    left:       `${from.left}px`,
-    top:        `${from.top}px`,
-    width:      `${from.width}px`,
-    height:     `${from.height}px`,
-    transform:  'none',
-    transition: 'left .55s cubic-bezier(.22,1,.36,1), top .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1)',
-  });
+
+  const dx       = to.left - from.left;
+  const dy       = to.top  - from.top;
+  const rotation = (Math.random() * 30 - 15).toFixed(1);
+
+  // Step 1 — place at source with no transition
+  fly.style.transition = 'none';
+  fly.style.display    = 'block';
+  fly.style.left       = `${from.left}px`;
+  fly.style.top        = `${from.top}px`;
+  fly.style.width      = `${from.width}px`;
+  fly.style.height     = `${from.height}px`;
+  fly.style.transform  = 'translate(0,0) scale(1)';
 
   sndWhoosh();
 
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    fly.style.left      = `${to.left}px`;
-    fly.style.top       = `${to.top}px`;
-    fly.style.transform = `rotate(${rotation}deg) scale(1.08)`;
-  }));
+  // Step 2 — force reflow so the browser commits the initial position,
+  // then start the transform transition to the destination
+  fly.getBoundingClientRect();
+  fly.style.transition = 'transform 0.6s cubic-bezier(.22,1,.36,1)';
+  fly.style.transform  = `translate(${dx}px,${dy}px) rotate(${rotation}deg) scale(1.12)`;
 
-  setTimeout(() => { fly.style.display = 'none'; onLand(); }, 580);
+  setTimeout(() => { fly.style.display = 'none'; onLand(); }, 650);
 };
 
 // ── Pulse ring ────────────────────────────────────────────────
