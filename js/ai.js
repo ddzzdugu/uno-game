@@ -8,7 +8,7 @@
 import { gs } from './state.js';
 import { canPlay, drawN, nextIdx, playCardCore } from './rules.js';
 import { renderAll, setStatus } from './render.js';
-import { animateAIPlay } from './animate.js';
+import { animateAIPlay, animateDraw } from './animate.js';
 import { sndFlip, sndUno } from './audio.js';
 import { COLORS } from './deck.js';
 
@@ -24,20 +24,24 @@ export const doAITurn = (onTurnEnd, onWin) => {
   const playable = gs.hands[idx].filter(canPlay);
 
   if (playable.length === 0) {
-    // Draw one card, then check if the drawn card is playable
+    // Draw one card, animate it flying to the AI's hand, then check if playable
     sndFlip();
     drawN(idx, 1);
-    renderAll();
     setStatus(`${gs.playerNames[idx]} draws a card.`);
+    gs.animating = true;
 
-    const drawn = gs.hands[idx][gs.hands[idx].length - 1];
-    if (canPlay(drawn)) {
-      setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1400);
-    } else {
-      gs.currentPlayer = nextIdx(idx);
+    animateDraw(idx, () => {
+      gs.animating = false;
       renderAll();
-      setTimeout(onTurnEnd, 1100);
-    }
+      const drawn = gs.hands[idx][gs.hands[idx].length - 1];
+      if (canPlay(drawn)) {
+        setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1400);
+      } else {
+        gs.currentPlayer = nextIdx(idx);
+        renderAll();
+        setTimeout(onTurnEnd, 1100);
+      }
+    });
     return;
   }
 

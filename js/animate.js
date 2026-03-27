@@ -62,6 +62,38 @@ export const animateAIPlay = (playerIdx, cardId, onDone) => {
   });
 };
 
+/**
+ * Animate a card flying from the draw pile to a player's hand.
+ * @param {number}   toIdx   Destination player index (0=human, 1-2=AI).
+ * @param {Function} onDone
+ */
+export const animateDraw = (toIdx, onDone) => {
+  const srcEl  = document.getElementById('draw-pile');
+  const destEl = document.getElementById(`hand-${toIdx}`);
+  if (!srcEl || !destEl) { onDone(); return; }
+
+  const srcRect  = srcEl.getBoundingClientRect();
+  const destRect = destEl.getBoundingClientRect();
+
+  // Land near the right edge of the hand (where the new card will appear)
+  const destW = toIdx === 0 ? srcRect.width  : Math.min(srcRect.width,  46);
+  const destH = toIdx === 0 ? srcRect.height : Math.min(srcRect.height, 70);
+  const to = {
+    left:   destRect.right - destW - 4,
+    top:    destRect.top + (destRect.height - destH) / 2,
+    width:  destW,
+    height: destH,
+  };
+
+  _flyCard({
+    classList: 'card back',
+    html:      '<div class="card-back-inner"><div class="back-oval"><span>UNO</span></div></div>',
+    from:      { left: srcRect.left, top: srcRect.top, width: srcRect.width, height: srcRect.height },
+    to,
+    onLand:    onDone,
+  });
+};
+
 /** Internal: move the shared #anim-card element from `from` rect to `to` rect */
 const _flyCard = ({ classList, html, from, to, onLand }) => {
   const fly = document.getElementById('anim-card');

@@ -9,8 +9,8 @@ import { applyStartCardEffect, isHumanPlayable,
 import { renderAll, setStatus, updateNameTagHighlights,
          showUnoBadge, hideUnoBadge,
          showColorChooser, hideColorChooser }     from './render.js';
-import { animatePlay, launchConfetti,
-         launchFireworks }                        from './animate.js';
+import { animatePlay, animateDraw,
+         launchConfetti, launchFireworks }        from './animate.js';
 import { doAITurn }                               from './ai.js';
 import { sndUno, sndWin }                         from './audio.js';
 
@@ -81,15 +81,14 @@ const _startHumanPlay = (cardId, chosenColor) => {
 const onDrawPileClick = () => {
   if (gs.currentPlayer !== 0 || gs.phase !== 'playing' || gs.animating) return;
   gs.animating = true;
-
   drawN(0, 1);
-  setTimeout(() => {
+  animateDraw(0, () => {
     gs.animating = false;
     gs.currentPlayer = nextIdx(0);
     renderAll();
     updateNameTagHighlights();
     scheduleTurn();
-  }, 280);
+  });
 };
 
 /** Called from the UNO button in index.html */
