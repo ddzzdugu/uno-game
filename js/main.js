@@ -27,7 +27,7 @@ const scheduleTurn = () => {
     setStatus(`${gs.playerNames[gs.currentPlayer]}'s turn…`);
     renderAll();
     updateNameTagHighlights();
-    setTimeout(() => doAITurn(scheduleTurn, showWinScreen), 950);
+    setTimeout(() => doAITurn(scheduleTurn, showWinScreen), 1800);
   }
 };
 
@@ -101,6 +101,17 @@ window.callUno = () => {
     setStatus('UNO! 🎉');
     hideUnoBadge();
   }
+};
+
+// ── Stop game ────────────────────────────────────────────────
+
+/** Called from the Stop button */
+window.stopGame = () => {
+  if (gs.phase !== 'playing') return;
+  gs.phase = 'gameOver';
+  document.getElementById('win-title').textContent    = 'Game Stopped';
+  document.getElementById('win-subtitle').textContent = 'Want to play again?';
+  document.getElementById('win-screen').classList.add('visible');
 };
 
 // ── Win screen ───────────────────────────────────────────────

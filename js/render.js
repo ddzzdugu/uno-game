@@ -122,12 +122,16 @@ export const updateBadges = () => {
 // ── Active-turn highlights ───────────────────────────────────
 
 export const updateNameTagHighlights = () => {
+  const isPlaying = gs.phase === 'playing';
   for (let i = 0; i < 3; i++) {
-    const tag = document.getElementById(`nametag-${i}`);
-    if (tag) tag.classList.toggle('active-turn', i === gs.currentPlayer && gs.phase === 'playing');
+    const active = i === gs.currentPlayer && isPlaying;
+    const tag  = document.getElementById(`nametag-${i}`);
+    const zone = document.getElementById(i === 0 ? 'player-zone' : `zone-${i}`);
+    if (tag)  tag.classList.toggle('active-turn', active);
+    if (zone) zone.classList.toggle('active-zone', active);
   }
   document.getElementById('player-zone').classList.toggle(
-    'your-turn', gs.currentPlayer === 0 && gs.phase === 'playing'
+    'your-turn', gs.currentPlayer === 0 && isPlaying
   );
   document.getElementById('direction-indicator').textContent =
     gs.direction === 1 ? '↻' : '↺';

@@ -160,6 +160,25 @@
   border: 2px solid var(--bg);
 }
 
+/* ---------- Active opponent zone ---------- */
+.opponent-zone.active-zone {
+  outline: 2px solid rgba(255,255,255,0.35);
+  border-radius: 12px;
+  padding: 6px 8px;
+  box-shadow: 0 0 20px 4px rgba(255,255,255,0.15);
+}
+
+.opponent-zone.active-zone::after {
+  content: 'thinking…';
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  animation: your-turn-flash 0.8s ease-in-out infinite alternate;
+  margin-top: 4px;
+}
+
 /* ---------- Hands ---------- */
 .hand {
   display: flex;

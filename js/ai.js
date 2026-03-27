@@ -32,17 +32,17 @@ export const doAITurn = (onTurnEnd, onWin) => {
 
     const drawn = gs.hands[idx][gs.hands[idx].length - 1];
     if (canPlay(drawn)) {
-      setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 700);
+      setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1400);
     } else {
       gs.currentPlayer = nextIdx(idx);
       renderAll();
-      setTimeout(onTurnEnd, 500);
+      setTimeout(onTurnEnd, 1100);
     }
     return;
   }
 
   const chosen = _pickBestCard(playable, idx);
-  setTimeout(() => _aiPlayCard(idx, chosen, onTurnEnd, onWin), 500);
+  setTimeout(() => _aiPlayCard(idx, chosen, onTurnEnd, onWin), 1200);
 };
 
 // ── Card selection strategy ──────────────────────────────────
@@ -99,7 +99,7 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
     if (winner >= 0) {
       onWin(winner);
     } else {
-      setTimeout(onTurnEnd, 500);
+      setTimeout(onTurnEnd, 900);
     }
   });
 };
