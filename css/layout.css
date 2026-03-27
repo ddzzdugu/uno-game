@@ -1,0 +1,168 @@
+/* ============================================================
+   LAYOUT — game zones, piles, name tags, hands
+   ============================================================ */
+
+#game-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  gap: 6px;
+  position: relative;
+}
+
+/* ---------- Opponents row ---------- */
+.opponents-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.opponent-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.center-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 160px;
+}
+
+/* ---------- Center piles ---------- */
+#center-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  position: relative;
+}
+
+#draw-pile-wrapper,
+#discard-pile-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pile-label {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.65;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#draw-pile {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#draw-pile:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 24px var(--primary);
+}
+
+#color-indicator {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.7);
+  box-shadow: 0 0 14px currentColor;
+  transition: background 0.35s;
+  margin-top: 4px;
+}
+
+/* ---------- Name tags ---------- */
+.name-tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;
+  border: 2px solid transparent;
+  transition: box-shadow 0.3s;
+  background: rgba(255,255,255,0.08);
+}
+
+.name-tag.active-turn {
+  box-shadow: 0 0 16px 4px currentColor;
+  background: rgba(255,255,255,0.14);
+}
+
+.card-count-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+}
+
+/* ---------- Hands ---------- */
+.hand {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  min-height: 40px;
+}
+
+/* Player hand overlaps cards slightly */
+#hand-0 .card { margin: 0 -6px; }
+#hand-0 .card:first-child { margin-left: 0; }
+#hand-0 .card:last-child  { margin-right: 0; }
+#hand-0 .card.playable:hover { z-index: 10; }
+
+/* ---------- Player zone ---------- */
+#player-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-bottom: 6px;
+}
+
+#controls-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---------- Misc ---------- */
+#direction-indicator {
+  font-size: 24px;
+  opacity: 0.55;
+  line-height: 1;
+}
+
+#status-msg {
+  font-size: 15px;
+  font-weight: 700;
+  min-height: 22px;
+  text-align: center;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(245,158,11,0.5);
+}

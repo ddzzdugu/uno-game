@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/ui.css" />
+</head>
+<body>
+
+<div id="game-wrapper">
+
+  <!-- Opponents row -->
+  <div class="opponents-row">
+
+    <div class="opponent-zone" id="zone-1">
+      <div class="name-tag" id="nametag-1" style="color:#ef4444; border-color:#ef4444;">
+        <span>🤖 Alex</span>
+        <span class="card-count-badge" id="badge-1">7</span>
+      </div>
+      <div class="hand opponent-hand" id="hand-1"></div>
+    </div>
+
+    <div class="center-info">
+      <div id="direction-indicator">↻</div>
+      <div id="status-msg">Starting…</div>
+    </div>
+
+    <div class="opponent-zone" id="zone-2">
+      <div class="name-tag" id="nametag-2" style="color:#22c55e; border-color:#22c55e;">
+        <span>🤖 Sam</span>
+        <span class="card-count-badge" id="badge-2">7</span>
+      </div>
+      <div class="hand opponent-hand" id="hand-2"></div>
+    </div>
+  </div>
+
+  <!-- Center: draw pile + discard pile -->
+  <div id="center-area">
+    <div id="draw-pile-wrapper">
+      <div class="pile-label">Draw</div>
+      <div class="card back" id="draw-pile" title="Click to draw"></div>
+      <div class="pile-label" id="deck-count" style="font-size:12px;opacity:.5;">108</div>
+    </div>
+
+    <div id="discard-pile-wrapper">
+      <div class="pile-label">Discard</div>
+      <div id="discard-top"></div>
+      <div id="color-indicator" title="Active color"></div>
+    </div>
+  </div>
+
+  <!-- Player zone (bottom) -->
+  <div id="player-zone">
+    <div id="controls-row">
+      <div class="name-tag" id="nametag-0" style="color:#a855f7; border-color:#a855f7;">
+        <span>👤 You</span>
+        <span class="card-count-badge" id="badge-0">7</span>
+      </div>
+      <button id="uno-btn" onclick="callUno()">UNO!</button>
+    </div>
+    <div class="hand" id="hand-0"></div>
+  </div>
+
+</div>
+
+<!-- Color chooser overlay -->
+<div id="color-chooser">
+  <h2>Choose a color</h2>
+  <div class="color-choices">
+    <div class="color-choice r" onclick="chooseColor('red')"    title="Red"></div>
+    <div class="color-choice b" onclick="chooseColor('blue')"   title="Blue"></div>
+    <div class="color-choice g" onclick="chooseColor('green')"  title="Green"></div>
+    <div class="color-choice y" onclick="chooseColor('yellow')" title="Yellow"></div>
+  </div>
+</div>
+
+<!-- Win screen -->
+<div id="win-screen">
+  <div id="trophy">🏆</div>
+  <h1 id="win-title">You Win!</h1>
+  <div id="win-subtitle"></div>
+  <button class="btn" onclick="restartGame()" style="margin-top:16px;">Play Again</button>
+</div>
+
+<!-- Flying card used for animations -->
+<div id="anim-card" class="card" style="display:none;"></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

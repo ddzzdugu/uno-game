@@ -1,0 +1,35 @@
+/* ============================================================
+   BASE — reset, custom properties, body
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:          #1a0a2e;
+  --primary:     #7c3aed;
+  --accent:      #f59e0b;
+  --red:         #ef4444;
+  --blue:        #3b82f6;
+  --green:       #22c55e;
+  --yellow:      #facc15;
+  --text:        #ffffff;
+  --card-w:      100px;
+  --card-h:      150px;
+  --card-radius: 12px;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  user-select: none;
+}
