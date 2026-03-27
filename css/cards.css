@@ -1,84 +1,168 @@
 /* ============================================================
-   CARDS — base style, colors, face-down, playable states
+   CARDS — official Mattel UNO card design
    ============================================================ */
 
+/* ── Base card shell (white border effect) ── */
 .card {
   width: var(--card-w);
   height: var(--card-h);
   border-radius: var(--card-radius);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 64px;
-  line-height: 1;
-  color: #fff;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
-  box-shadow: 4px 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
-  border: 3px solid rgba(255,255,255,0.35);
+  background: #fff;
+  border: 3px solid #fff;
+  box-shadow: 4px 4px 14px rgba(0,0,0,0.55);
   position: relative;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   flex-shrink: 0;
   overflow: hidden;
+  display: flex;
+  align-items: stretch;
 }
 
-/* Inner decorative border */
-.card::before {
+/* ── Colored face (fills the card inside the white border) ── */
+.card-face {
+  flex: 1;
+  border-radius: calc(var(--card-radius) - 3px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Color fills */
+.card.red    .card-face { background: var(--red); }
+.card.blue   .card-face { background: var(--blue); }
+.card.green  .card-face { background: var(--green); }
+.card.yellow .card-face { background: var(--yellow); }
+.card.wild   .card-face { background: #1a1a1a; }
+
+/* ── Rotated oval (the characteristic UNO ellipse) ── */
+.card-face::before {
   content: '';
   position: absolute;
-  inset: 6px;
-  border-radius: 8px;
-  border: 2px solid rgba(255,255,255,0.2);
+  width: 72%;
+  height: 118%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  border: 4px solid rgba(255,255,255,0.85);
+  transform: rotate(20deg);
   pointer-events: none;
 }
+/* Wild cards have no oval — only their circle/squares */
+.card.wild .card-face::before { display: none; }
 
-/* Corner value labels */
+/* ── Corner labels ── */
 .card .corner {
   position: absolute;
   font-size: 13px;
   font-weight: 900;
   line-height: 1;
-  padding: 3px;
+  color: #fff;
+  z-index: 2;
 }
-.card .corner.tl { top: 4px;    left: 6px; }
-.card .corner.br { bottom: 4px; right: 6px; transform: rotate(180deg); }
+.card.yellow .corner { color: #1a1a1a; }
+.card .corner.tl { top: 5px;    left: 8px; }
+.card .corner.br { bottom: 5px; right: 8px; transform: rotate(180deg); }
 
-/* ---------- Card colors ---------- */
-.card.red    { background: var(--red); }
-.card.blue   { background: var(--blue); }
-.card.green  { background: var(--green); }
-.card.yellow { background: var(--yellow); color: #1a0a2e; text-shadow: none; }
-.card.yellow .corner { color: #1a0a2e; }
-.card.wild   { background: linear-gradient(135deg, #ef4444, #facc15, #22c55e, #3b82f6, #a855f7); }
-
-/* ---------- Face-down (back) ---------- */
-.card.back {
-  background: linear-gradient(135deg, var(--primary), #4c1d95);
-  font-size: 22px;
-  cursor: default;
-}
-.card.back::after {
-  content: 'UNO';
-  font-size: 18px;
+/* ── Center number / action symbol ── */
+.card-center {
+  font-size: 60px;
   font-weight: 900;
-  letter-spacing: 2px;
-  color: var(--accent);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  font-style: italic;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 2px 3px 0 rgba(0,0,0,0.35);
+  z-index: 2;
+  position: relative;
+}
+.card.yellow .card-center { color: #1a1a1a; text-shadow: none; }
+.card-center.action-sym   { font-size: 38px; }
+
+/* ── Wild rainbow circle ── */
+.wild-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #c94455  0deg  90deg,
+    #4a7ec0 90deg 180deg,
+    #d4b830 180deg 270deg,
+    #3d9b5a 270deg 360deg
+  );
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  z-index: 2;
 }
 
-/* ---------- Opponent hand (smaller, face-down) ---------- */
+/* ── Wild Draw Four 2×2 squares ── */
+.wild-squares {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  z-index: 2;
+}
+.ws {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid rgba(255,255,255,0.6);
+}
+.ws-r { background: var(--red);    }
+.ws-b { background: var(--blue);   }
+.ws-y { background: var(--yellow); }
+.ws-g { background: var(--green);  }
+
+/* ── Face-down card (back design) ── */
+.card.back {
+  cursor: default;
+  background: #c94455;       /* red outer shell */
+  border-color: #c94455;
+}
+.card-back-inner {
+  flex: 1;
+  border-radius: calc(var(--card-radius) - 3px);
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.back-oval {
+  width: 66%;
+  height: 105%;
+  border-radius: 50%;
+  background: #c94455;
+  transform: rotate(20deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255,255,255,0.5);
+}
+.back-oval span {
+  transform: rotate(-20deg);
+  font-size: 16px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1px;
+  color: #f7d000;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+
+/* ── Opponent hand (smaller face-down cards) ── */
 .opponent-hand .card {
-  width: 48px;
-  height: 72px;
-  font-size: 22px;
+  width: 46px;
+  height: 70px;
   border-radius: 7px;
+  border-width: 2px;
 }
-.opponent-hand .card .corner { display: none; }
-.opponent-hand .card::after  { font-size: 10px; }
+.opponent-hand .card-back-inner {
+  border-radius: 5px;
+}
+.opponent-hand .back-oval span { font-size: 10px; }
 
-/* ---------- Playable / disabled states ---------- */
+/* ── Playable / disabled states ── */
 .card.playable:hover {
   transform: translateY(-12px) scale(1.07);
   box-shadow: 0 16px 32px rgba(0,0,0,0.6), 0 0 24px var(--accent);
@@ -86,10 +170,10 @@
 }
 
 .card.disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 .card.disabled:hover {
   transform: none;
-  box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 4px 4px 14px rgba(0,0,0,0.55);
 }

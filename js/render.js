@@ -6,8 +6,8 @@ import { gs } from './state.js';
 import { isHumanPlayable, topCard, topColor } from './rules.js';
 
 const COLOR_HEX = {
-  red: '#ef4444', blue: '#3b82f6', green: '#22c55e',
-  yellow: '#facc15', wild: '#a855f7',
+  red: '#c94455', blue: '#4a7ec0', green: '#3d9b5a',
+  yellow: '#d4b830', wild: '#1a1a1a',
 };
 
 const ACTION_SYMBOL = { Skip: '⊘', Reverse: '↺', 'Draw Two': '+2' };
@@ -26,30 +26,37 @@ export const makeCardEl = (card, { faceDown = false, humanPlayable = false } = {
 
   if (faceDown) {
     el.classList.add('back');
+    el.innerHTML = `<div class="card-back-inner"><div class="back-oval"><span>UNO</span></div></div>`;
     return el;
   }
 
   el.classList.add(card.color);
 
-  let center, corner;
+  let cornerText, centerHtml;
   if (card.type === 'wild') {
-    center = card.value === 'Wild' ? '🌈' : '+4';
-    corner = center;
+    if (card.value === 'Wild Draw Four') {
+      cornerText = '+4';
+      centerHtml = `<div class="wild-squares">
+        <div class="ws ws-r"></div><div class="ws ws-b"></div>
+        <div class="ws ws-y"></div><div class="ws ws-g"></div>
+      </div>`;
+    } else {
+      cornerText = '🌈';
+      centerHtml = `<div class="wild-circle"></div>`;
+    }
   } else if (card.type === 'action') {
-    center = ACTION_SYMBOL[card.value] ?? card.value;
-    corner = center;
+    cornerText = ACTION_SYMBOL[card.value] ?? card.value;
+    centerHtml = `<div class="card-center action-sym">${cornerText}</div>`;
   } else {
-    center = card.value;
-    corner = card.value;
+    cornerText = card.value;
+    centerHtml = `<div class="card-center">${card.value}</div>`;
   }
 
-  const centerSize = card.type === 'number' ? '64px' : card.type === 'action' ? '38px' : '40px';
-
-  el.innerHTML = `
-    <span class="corner tl">${corner}</span>
-    <span style="font-size:${centerSize};line-height:1;">${center}</span>
-    <span class="corner br">${corner}</span>
-  `;
+  el.innerHTML = `<div class="card-face">
+    <span class="corner tl">${cornerText}</span>
+    ${centerHtml}
+    <span class="corner br">${cornerText}</span>
+  </div>`;
 
   el.classList.add(humanPlayable ? 'playable' : 'disabled');
   return el;

@@ -6,8 +6,8 @@ import { gs } from './state.js';
 import { sndWhoosh } from './audio.js';
 
 const COLOR_HEX = {
-  red: '#ef4444', blue: '#3b82f6', green: '#22c55e',
-  yellow: '#facc15', wild: '#a855f7',
+  red: '#c94455', blue: '#4a7ec0', green: '#3d9b5a',
+  yellow: '#d4b830', wild: '#1a1a1a',
 };
 
 // ── Card flight ───────────────────────────────────────────────
@@ -55,7 +55,7 @@ export const animateAIPlay = (playerIdx, cardId, onDone) => {
 
   _flyCard({
     classList: 'card back',
-    html:      '',
+    html:      '<div class="card-back-inner"><div class="back-oval"><span>UNO</span></div></div>',
     from:      { ...srcRect, width: Math.min(srcRect.width, 100), height: Math.min(srcRect.height, 150) },
     to:        destRect,
     onLand:    () => { if (card) spawnPulseRing(destEl, card); onDone(); },
