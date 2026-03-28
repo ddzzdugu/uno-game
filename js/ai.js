@@ -24,24 +24,39 @@ export const doAITurn = (onTurnEnd, onWin) => {
   const playable = gs.hands[idx].filter(canPlay);
 
   if (playable.length === 0) {
-    // Draw one card, animate it flying to the AI's hand, then check if playable
     sndFlip();
-    drawN(idx, 1);
-    setStatus(`${gs.playerNames[idx]} draws a card.`);
-    gs.animating = true;
 
-    animateDraw(idx, () => {
-      gs.animating = false;
-      renderAll();
-      const drawn = gs.hands[idx][gs.hands[idx].length - 1];
-      if (canPlay(drawn)) {
-        setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1400);
-      } else {
+    if (gs.pendingDraw > 0) {
+      // Must absorb the full stacked draw
+      const count = gs.pendingDraw;
+      gs.pendingDraw = 0;
+      drawN(idx, count);
+      setStatus(`${gs.playerNames[idx]} draws ${count} cards!`);
+      gs.animating = true;
+      animateDrawN(idx, count, () => {
+        gs.animating = false;
         gs.currentPlayer = nextIdx(idx);
         renderAll();
         setTimeout(onTurnEnd, 1100);
-      }
-    });
+      });
+    } else {
+      // Draw one card and check if playable
+      drawN(idx, 1);
+      setStatus(`${gs.playerNames[idx]} draws a card.`);
+      gs.animating = true;
+      animateDraw(idx, () => {
+        gs.animating = false;
+        renderAll();
+        const drawn = gs.hands[idx][gs.hands[idx].length - 1];
+        if (canPlay(drawn)) {
+          setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1400);
+        } else {
+          gs.currentPlayer = nextIdx(idx);
+          renderAll();
+          setTimeout(onTurnEnd, 1100);
+        }
+      });
+    }
     return;
   }
 
@@ -86,7 +101,8 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
   gs.animating = true;
 
   animateAIPlay(idx, card.id, () => {
-    const chosenColor    = card.type === 'wild' ? _pickColor(idx) : null;
+    const chosenColor = card.type === 'wild' ? _pickColor(idx) : null;
+    if (card.value === 'Swap Hands') gs.swapTarget = _pickSwapTarget(idx);
     const { winner, msg } = playCardCore(idx, card.id, chosenColor);
 
     gs.animating = false;
@@ -115,6 +131,14 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
       setTimeout(onTurnEnd, 900);
     }
   });
+};
+
+/** Pick the opponent to swap with — target whoever has the fewest cards */
+const _pickSwapTarget = idx => {
+  const opponents = [0, 1, 2].filter(i => i !== idx);
+  return opponents.reduce((best, i) =>
+    gs.hands[i].length < gs.hands[best].length ? i : best
+  , opponents[0]);
 };
 
 /** Pick the color the AI has the most of in hand */

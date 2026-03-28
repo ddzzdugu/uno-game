@@ -8,7 +8,8 @@ import { applyStartCardEffect, isHumanPlayable,
          canPlay, drawN, nextIdx, playCardCore }  from './rules.js';
 import { renderAll, setStatus, updateNameTagHighlights,
          showUnoBadge, hideUnoBadge,
-         showColorChooser, hideColorChooser }     from './render.js';
+         showColorChooser, hideColorChooser,
+         showSwapChooser, hideSwapChooser }       from './render.js';
 import { animatePlay, animateDraw, animateDrawN,
          launchConfetti, launchFireworks }        from './animate.js';
 import { doAITurn }                               from './ai.js';
@@ -20,11 +21,16 @@ const scheduleTurn = () => {
   if (gs.phase === 'gameOver') return;
 
   if (gs.currentPlayer === 0) {
-    setStatus('Your turn!');
+    setStatus(gs.pendingDraw > 0
+      ? `You must draw ${gs.pendingDraw} cards or stack a +2!`
+      : 'Your turn!');
     renderAll();
     updateNameTagHighlights();
   } else {
-    setStatus(`${gs.playerNames[gs.currentPlayer]}'s turn…`);
+    const name = gs.playerNames[gs.currentPlayer];
+    setStatus(gs.pendingDraw > 0
+      ? `${name} must draw ${gs.pendingDraw} or stack!`
+      : `${name}'s turn…`);
     renderAll();
     updateNameTagHighlights();
     setTimeout(() => doAITurn(scheduleTurn, showWinScreen), 1800);
@@ -41,10 +47,23 @@ window.onCardClick = cardId => {
 
   if (card.type === 'wild') {
     gs.pendingWild = cardId;
-    showColorChooser();
+    if (card.value === 'Swap Hands') {
+      document.getElementById('swap-choice-1').textContent = `🤖 ${gs.playerNames[1]}`;
+      document.getElementById('swap-choice-2').textContent = `🤖 ${gs.playerNames[2]}`;
+      showSwapChooser();
+    } else {
+      showColorChooser();
+    }
   } else {
     _startHumanPlay(cardId, null);
   }
+};
+
+/** Called from the swap-chooser overlay buttons in index.html */
+window.chooseSwap = targetIdx => {
+  hideSwapChooser();
+  gs.swapTarget = targetIdx;
+  showColorChooser();
 };
 
 /** Called from the color-chooser overlay buttons in index.html */
@@ -92,14 +111,29 @@ const _startHumanPlay = (cardId, chosenColor) => {
 const onDrawPileClick = () => {
   if (gs.currentPlayer !== 0 || gs.phase !== 'playing' || gs.animating) return;
   gs.animating = true;
-  drawN(0, 1);
-  animateDraw(0, () => {
-    gs.animating = false;
-    gs.currentPlayer = nextIdx(0);
-    renderAll();
-    updateNameTagHighlights();
-    scheduleTurn();
-  });
+
+  if (gs.pendingDraw > 0) {
+    const count = gs.pendingDraw;
+    gs.pendingDraw = 0;
+    drawN(0, count);
+    setStatus(`You draw ${count} cards!`);
+    animateDrawN(0, count, () => {
+      gs.animating = false;
+      gs.currentPlayer = nextIdx(0);
+      renderAll();
+      updateNameTagHighlights();
+      scheduleTurn();
+    });
+  } else {
+    drawN(0, 1);
+    animateDraw(0, () => {
+      gs.animating = false;
+      gs.currentPlayer = nextIdx(0);
+      renderAll();
+      updateNameTagHighlights();
+      scheduleTurn();
+    });
+  }
 };
 
 /** Called from the UNO button in index.html */

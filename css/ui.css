@@ -71,6 +71,46 @@
   animation: uno-pulse 0.55s infinite alternate;
 }
 
+/* ---------- Swap Hands chooser overlay ---------- */
+#swap-chooser {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 410;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+}
+#swap-chooser.visible { display: flex; }
+
+#swap-chooser h2 {
+  font-size: 30px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.swap-choices { display: flex; gap: 20px; }
+
+.swap-choice {
+  padding: 16px 32px;
+  border-radius: 16px;
+  border: 3px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.swap-choice:hover {
+  transform: scale(1.1);
+  background: rgba(255,255,255,0.25);
+}
+
 /* ---------- Color chooser overlay ---------- */
 #color-chooser {
   display: none;

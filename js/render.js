@@ -42,6 +42,9 @@ export const makeCardEl = (card, { faceDown = false, humanPlayable = false } = {
         <div class="ws ws-r"></div><div class="ws ws-b"></div>
         <div class="ws ws-y"></div><div class="ws ws-g"></div>
       </div>`;
+    } else if (card.value === 'Swap Hands') {
+      cornerText = '🔄';
+      centerHtml = `<div class="card-center action-sym" style="font-size:1.8em;line-height:1">🔄</div>`;
     } else {
       cornerText = '🌈';
       centerHtml = `<div class="wild-circle"></div>`;
@@ -164,3 +167,5 @@ export const showUnoBadge  = ()  => document.getElementById('uno-btn').classList
 export const hideUnoBadge  = ()  => document.getElementById('uno-btn').classList.remove('uno-alert');
 export const showColorChooser = () => document.getElementById('color-chooser').classList.add('visible');
 export const hideColorChooser = () => document.getElementById('color-chooser').classList.remove('visible');
+export const showSwapChooser  = () => document.getElementById('swap-chooser').classList.add('visible');
+export const hideSwapChooser  = () => document.getElementById('swap-chooser').classList.remove('visible');

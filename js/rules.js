@@ -55,6 +55,8 @@ export const drawN = (playerIdx, n) => {
 
 /** Can this card legally be played on top of the current discard? */
 export const canPlay = card => {
+  // During a +2 stack, only Draw Two can be played to counter
+  if (gs.pendingDraw > 0) return card.value === 'Draw Two';
   if (card.type === 'wild')              return true;
   if (card.color === topColor())         return true;
   if (card.value === topCard().value)    return true;
@@ -109,11 +111,10 @@ export const applyCardEffect = (card, playerIdx) => {
       return 'Direction reversed!';
     }
     case 'Draw Two': {
-      const victim = nextIdx(playerIdx);
-      drawN(victim, 2);
-      gs.currentPlayer = nextIdx(victim);
-      gs.forcedDraw = { victim, count: 2 };
-      return `${names[victim]} draws 2 and is skipped!`;
+      gs.pendingDraw += 2;
+      const nextPlayer = nextIdx(playerIdx);
+      gs.currentPlayer = nextPlayer;
+      return `${names[nextPlayer]} must draw ${gs.pendingDraw} or stack!`;
     }
     case 'Wild Draw Four': {
       const victim = nextIdx(playerIdx);
@@ -121,6 +122,17 @@ export const applyCardEffect = (card, playerIdx) => {
       gs.currentPlayer = nextIdx(victim);
       gs.forcedDraw = { victim, count: 4 };
       return `${names[victim]} draws 4 and is skipped!`;
+    }
+    case 'Swap Hands': {
+      const target = gs.swapTarget ?? nextIdx(playerIdx);
+      // Skip swap if this was the player's last card — let the win check in
+      // playCardCore fire normally instead of giving the player cards back.
+      if (gs.hands[playerIdx].length > 0) {
+        [gs.hands[playerIdx], gs.hands[target]] = [gs.hands[target], gs.hands[playerIdx]];
+      }
+      gs.swapTarget = null;
+      gs.currentPlayer = nextIdx(playerIdx);
+      return `${names[playerIdx]} swapped hands with ${names[target]}!`;
     }
     case 'Wild':
       gs.currentPlayer = nextIdx(playerIdx);

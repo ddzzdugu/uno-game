@@ -40,7 +40,12 @@ export const buildDeck = () => {
     }
   }
 
-  return deck; // 108 cards total
+  // 2 Swap Hands (wild)
+  for (let i = 0; i < 2; i++) {
+    deck.push({ id: id++, color: 'wild', value: 'Swap Hands', type: 'wild' });
+  }
+
+  return deck; // 110 cards total
 };
 
 /** Fisher-Yates shuffle — returns a new array */
