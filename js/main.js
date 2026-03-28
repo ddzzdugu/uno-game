@@ -27,10 +27,12 @@ const scheduleTurn = () => {
     renderAll();
     updateNameTagHighlights();
   } else {
-    const name = gs.playerNames[gs.currentPlayer];
-    setStatus(gs.pendingDraw > 0
-      ? `${name} must draw ${gs.pendingDraw} or stack!`
-      : `${name}'s turn…`);
+    // Only update status for the pending-draw warning; otherwise let the
+    // card-effect message ("X is skipped!", "Direction reversed!", etc.) linger
+    // visibly while the AI "thinks" before playing.
+    if (gs.pendingDraw > 0) {
+      setStatus(`${gs.playerNames[gs.currentPlayer]} must draw ${gs.pendingDraw} or stack!`);
+    }
     renderAll();
     updateNameTagHighlights();
     setTimeout(() => doAITurn(scheduleTurn, showWinScreen), 1800);

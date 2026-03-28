@@ -105,9 +105,9 @@ export const applyCardEffect = (card, playerIdx) => {
     }
     case 'Reverse': {
       gs.direction *= -1;
-      // With 3 players, Reverse effectively skips one player
-      const skipped = nextIdx(playerIdx);
-      gs.currentPlayer = nextIdx(skipped);
+      // In 3-player UNO, Reverse just changes direction — no skip.
+      // nextIdx now uses the flipped direction, so the previous player goes next.
+      gs.currentPlayer = nextIdx(playerIdx);
       return 'Direction reversed!';
     }
     case 'Draw Two': {
