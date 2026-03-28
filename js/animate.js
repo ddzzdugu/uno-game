@@ -84,6 +84,18 @@ export const animateDraw = (toIdx, onDone) => {
   });
 };
 
+/**
+ * Animate N cards flying one-by-one from the draw pile to a player's hand.
+ * Cards are already in the game state; this is purely visual.
+ */
+export const animateDrawN = (toIdx, count, onDone) => {
+  const step = (remaining) => {
+    if (remaining <= 0) { onDone(); return; }
+    animateDraw(toIdx, () => setTimeout(() => step(remaining - 1), 120));
+  };
+  step(count);
+};
+
 /** Internal: move the shared #anim-card element from `from` rect to `to` rect.
  *  The flying card always renders at its natural CSS size (--card-w × --card-h)
  *  and is centered over both the source and destination rectangles.

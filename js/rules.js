@@ -112,12 +112,14 @@ export const applyCardEffect = (card, playerIdx) => {
       const victim = nextIdx(playerIdx);
       drawN(victim, 2);
       gs.currentPlayer = nextIdx(victim);
+      gs.forcedDraw = { victim, count: 2 };
       return `${names[victim]} draws 2 and is skipped!`;
     }
     case 'Wild Draw Four': {
       const victim = nextIdx(playerIdx);
       drawN(victim, 4);
       gs.currentPlayer = nextIdx(victim);
+      gs.forcedDraw = { victim, count: 4 };
       return `${names[victim]} draws 4 and is skipped!`;
     }
     case 'Wild':
@@ -138,10 +140,17 @@ export const applyCardEffect = (card, playerIdx) => {
  * @param {string|null} chosenColor  Required for wild cards.
  * @returns {number} Winner index (0-2) if this move wins, otherwise -1.
  */
+/**
+ * @returns {{ winner: number, msg: string }}
+ *   winner = player index if someone won, -1 otherwise.
+ *   msg    = status string describing the card effect.
+ */
 export const playCardCore = (playerIdx, cardId, chosenColor = null) => {
   const hand = gs.hands[playerIdx];
   const idx  = hand.findIndex(c => c.id === cardId);
-  if (idx === -1) return -1;
+  if (idx === -1) return { winner: -1, msg: '' };
+
+  gs.forcedDraw = null;
 
   const card = hand.splice(idx, 1)[0];
   gs.discardPile.push(card);
@@ -149,18 +158,17 @@ export const playCardCore = (playerIdx, cardId, chosenColor = null) => {
 
   if (card.type === 'wild') {
     gs.activeColor = chosenColor || COLORS[0];
-    card.color = gs.activeColor; // persist chosen color on card for display
+    card.color = gs.activeColor;
   } else {
     gs.activeColor = card.color;
   }
 
-  const statusMsg = applyCardEffect(card, playerIdx);
+  const msg = applyCardEffect(card, playerIdx);
 
-  // Check win
   if (gs.hands[playerIdx].length === 0) {
     gs.phase = 'gameOver';
-    return playerIdx;
+    return { winner: playerIdx, msg };
   }
 
-  return -1; // no winner yet — caller can use statusMsg separately if needed
+  return { winner: -1, msg };
 };

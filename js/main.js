@@ -9,7 +9,7 @@ import { applyStartCardEffect, isHumanPlayable,
 import { renderAll, setStatus, updateNameTagHighlights,
          showUnoBadge, hideUnoBadge,
          showColorChooser, hideColorChooser }     from './render.js';
-import { animatePlay, animateDraw,
+import { animatePlay, animateDraw, animateDrawN,
          launchConfetti, launchFireworks }        from './animate.js';
 import { doAITurn }                               from './ai.js';
 import { sndUno, sndWin }                         from './audio.js';
@@ -60,7 +60,7 @@ window.chooseColor = color => {
 const _startHumanPlay = (cardId, chosenColor) => {
   gs.animating = true;
   animatePlay(0, cardId, () => {
-    const winner = playCardCore(0, cardId, chosenColor);
+    const { winner, msg } = playCardCore(0, cardId, chosenColor);
     gs.animating = false;
 
     if (gs.hands[0].length === 1 && !gs.unoCalled[0]) showUnoBadge();
@@ -70,9 +70,20 @@ const _startHumanPlay = (cardId, chosenColor) => {
       renderAll();
       showWinScreen(winner);
     } else {
+      if (msg) setStatus(msg);
       renderAll();
-      updateNameTagHighlights();
-      scheduleTurn();
+      if (gs.forcedDraw) {
+        const { victim, count } = gs.forcedDraw;
+        gs.animating = true;
+        animateDrawN(victim, count, () => {
+          gs.animating = false;
+          updateNameTagHighlights();
+          scheduleTurn();
+        });
+      } else {
+        updateNameTagHighlights();
+        scheduleTurn();
+      }
     }
   });
 };

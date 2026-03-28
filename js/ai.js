@@ -8,7 +8,7 @@
 import { gs } from './state.js';
 import { canPlay, drawN, nextIdx, playCardCore } from './rules.js';
 import { renderAll, setStatus } from './render.js';
-import { animateAIPlay, animateDraw } from './animate.js';
+import { animateAIPlay, animateDraw, animateDrawN } from './animate.js';
 import { sndFlip, sndUno } from './audio.js';
 import { COLORS } from './deck.js';
 
@@ -86,22 +86,31 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
   gs.animating = true;
 
   animateAIPlay(idx, card.id, () => {
-    const chosenColor = card.type === 'wild' ? _pickColor(idx) : null;
-    const winner      = playCardCore(idx, card.id, chosenColor);
+    const chosenColor    = card.type === 'wild' ? _pickColor(idx) : null;
+    const { winner, msg } = playCardCore(idx, card.id, chosenColor);
 
     gs.animating = false;
 
-    // Auto-call UNO if the AI is down to 1 card
     if (gs.hands[idx].length === 1 && !gs.unoCalled[idx]) {
       gs.unoCalled[idx] = true;
       sndUno();
       setStatus(`${gs.playerNames[idx]} calls UNO!`);
+    } else if (msg) {
+      setStatus(msg);
     }
 
     renderAll();
 
     if (winner >= 0) {
       onWin(winner);
+    } else if (gs.forcedDraw) {
+      const { victim, count } = gs.forcedDraw;
+      gs.animating = true;
+      animateDrawN(victim, count, () => {
+        gs.animating = false;
+        renderAll();
+        setTimeout(onTurnEnd, 900);
+      });
     } else {
       setTimeout(onTurnEnd, 900);
     }
