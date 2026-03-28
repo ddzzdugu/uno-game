@@ -191,6 +191,14 @@
   min-height: 40px;
 }
 
+.opponent-hand {
+  gap: 0;
+  justify-content: flex-start;
+  max-width: 360px;
+  padding-bottom: 55px;  /* compensate for last row's negative bottom margin */
+  align-items: flex-start;
+}
+
 /* Player hand overlaps cards slightly */
 #hand-0 .card { margin: 0 -6px; }
 #hand-0 .card:first-child { margin-left: 0; }

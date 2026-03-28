@@ -21,7 +21,7 @@
 /* ---------- Flying card (shared animation element) ---------- */
 #anim-card {
   position: fixed;
-  z-index: 500;
+  z-index: 200;   /* above game, below all overlays */
   pointer-events: none;
 }
 

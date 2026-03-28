@@ -150,8 +150,10 @@
   text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
 }
 
-/* ── Opponent hand — same card size as player, overlapping ── */
-.opponent-hand .card          { margin: 0 -14px; }
+/* ── Opponent hand — full-size, wraps to overlapping rows ── */
+.opponent-hand .card {
+  margin: 0 -14px -55px;   /* horizontal fan + rows overlap by 55px */
+}
 .opponent-hand .card:first-child { margin-left: 0; }
 .opponent-hand .card:last-child  { margin-right: 0; }
 

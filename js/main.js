@@ -132,6 +132,47 @@ window.restartGame = () => {
   startGame();
 };
 
+// ── Turn order intro ─────────────────────────────────────────
+
+const PLAYER_COLORS = ['#a855f7', '#c94455', '#3d9b5a'];
+const PLAYER_ICONS  = ['👤', '🤖', '🤖'];
+
+let _toTimer = null;
+
+const showTurnOrder = () => {
+  const seq = [
+    gs.currentPlayer,
+    nextIdx(gs.currentPlayer),
+    nextIdx(gs.currentPlayer, 2),
+  ];
+
+  document.getElementById('turn-order-list').innerHTML = seq.map((pid, pos) => `
+    <div class="to-item" style="color:${PLAYER_COLORS[pid]}">
+      <span class="to-num">${pos + 1}</span>
+      <span>${PLAYER_ICONS[pid]} ${gs.playerNames[pid]}</span>
+      ${pos === 0 ? '<span class="to-first-badge">First!</span>' : ''}
+    </div>
+  `).join('');
+
+  let secs = 3;
+  const cd = document.getElementById('turn-order-cd');
+  if (cd) cd.textContent = secs;
+  document.getElementById('turn-order-screen').classList.add('visible');
+
+  _toTimer = setInterval(() => {
+    secs--;
+    if (cd) cd.textContent = secs;
+    if (secs <= 0) { clearInterval(_toTimer); _toTimer = null; _dismissTurnOrder(); }
+  }, 1000);
+};
+
+const _dismissTurnOrder = () => {
+  if (_toTimer) { clearInterval(_toTimer); _toTimer = null; }
+  document.getElementById('turn-order-screen').classList.remove('visible');
+  scheduleTurn();
+};
+window.dismissTurnOrder = _dismissTurnOrder;
+
 // ── Boot ─────────────────────────────────────────────────────
 
 const startGame = () => {
@@ -139,7 +180,7 @@ const startGame = () => {
   applyStartCardEffect(gs.discardPile[0]);
   renderAll();
   updateNameTagHighlights();
-  scheduleTurn();
+  showTurnOrder();
 };
 
 document.getElementById('draw-pile').addEventListener('click', onDrawPileClick);
