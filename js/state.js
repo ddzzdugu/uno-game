@@ -55,6 +55,7 @@ export const initGame = () => {
     playerNames: ['You', 'Alex', 'Sam'],
     pendingDraw: 0,
     swapTarget: null,
+    drewThisTurn: false,
   };
 
   // Reset in-place so all module references stay valid

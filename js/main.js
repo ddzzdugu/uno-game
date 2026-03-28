@@ -21,6 +21,7 @@ const scheduleTurn = () => {
   if (gs.phase === 'gameOver') return;
 
   if (gs.currentPlayer === 0) {
+    gs.drewThisTurn = false;
     setStatus(gs.pendingDraw > 0
       ? `You must draw ${gs.pendingDraw} cards or stack a +2!`
       : 'Your turn!');
@@ -79,6 +80,7 @@ window.chooseColor = color => {
 };
 
 const _startHumanPlay = (cardId, chosenColor) => {
+  gs.drewThisTurn = false;
   gs.animating = true;
   animatePlay(0, cardId, () => {
     const { winner, msg } = playCardCore(0, cardId, chosenColor);
@@ -112,9 +114,9 @@ const _startHumanPlay = (cardId, chosenColor) => {
 /** Called when the human clicks the draw pile */
 const onDrawPileClick = () => {
   if (gs.currentPlayer !== 0 || gs.phase !== 'playing' || gs.animating) return;
-  gs.animating = true;
 
   if (gs.pendingDraw > 0) {
+    gs.animating = true;
     const count = gs.pendingDraw;
     gs.pendingDraw = 0;
     drawN(0, count);
@@ -126,14 +128,30 @@ const onDrawPileClick = () => {
       updateNameTagHighlights();
       scheduleTurn();
     });
+  } else if (gs.drewThisTurn) {
+    // Already drew — pass turn
+    gs.drewThisTurn = false;
+    gs.currentPlayer = nextIdx(0);
+    renderAll();
+    updateNameTagHighlights();
+    scheduleTurn();
   } else {
+    gs.animating = true;
     drawN(0, 1);
+    const drawn = gs.hands[0][gs.hands[0].length - 1];
     animateDraw(0, () => {
       gs.animating = false;
-      gs.currentPlayer = nextIdx(0);
       renderAll();
-      updateNameTagHighlights();
-      scheduleTurn();
+      if (canPlay(drawn)) {
+        gs.drewThisTurn = true;
+        setStatus('Card drawn is playable — play it, or click draw pile to pass.');
+        updateNameTagHighlights();
+      } else {
+        gs.currentPlayer = nextIdx(0);
+        renderAll();
+        updateNameTagHighlights();
+        scheduleTurn();
+      }
     });
   }
 };
