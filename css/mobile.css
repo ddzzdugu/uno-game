@@ -1,0 +1,253 @@
+/* ============================================================
+   MOBILE — responsive overrides for tablet & phone
+   ============================================================ */
+
+/* ---------- Tablet (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  :root {
+    --card-w: 80px;
+    --card-h: 120px;
+    --card-radius: 10px;
+  }
+
+  #game-wrapper {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  #center-area { gap: 28px; }
+
+  #status-msg { font-size: 17px; }
+
+  .pile-label { font-size: 11px; }
+
+  #color-indicator { width: 28px; height: 28px; }
+
+  #direction-indicator { font-size: 20px; }
+
+  .center-info { min-width: 120px; }
+
+  .opponent-hand {
+    max-width: 280px;
+  }
+  .opponent-hand .card {
+    margin: 0 -16px -46px;
+  }
+
+  #hand-0 .card { margin: 0 -8px; }
+
+  .card .corner { font-size: 11px; }
+  .card-center { font-size: 48px; }
+  .card-center.action-sym { font-size: 30px; }
+
+  .wild-circle { width: 44px; height: 44px; }
+  .ws { width: 18px; height: 18px; }
+
+  .back-oval span { font-size: 13px; }
+
+  .name-tag { font-size: 12px; padding: 3px 10px 3px 8px; }
+  .card-count-badge { width: 20px; height: 20px; font-size: 10px; top: -6px; right: -6px; }
+
+  /* Stop button — top right corner on tablet */
+  #stop-btn {
+    top: 8px;
+    right: 8px;
+    transform: none;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  #stop-btn:hover { transform: scale(1.06); }
+  #stop-btn:active { transform: scale(0.97); }
+
+  /* Overlays */
+  .color-choice { width: 64px; height: 64px; }
+  .color-choices { gap: 16px; }
+  #color-chooser h2 { font-size: 24px; }
+
+  .swap-choice { padding: 12px 24px; font-size: 16px; }
+  #swap-chooser h2 { font-size: 24px; }
+
+  #win-screen h1 { font-size: 42px; }
+  #trophy { font-size: 64px; }
+  #win-subtitle { font-size: 18px; }
+
+  #turn-order-screen h2 { font-size: 26px; }
+  .to-item { font-size: 18px; padding: 10px 20px; min-width: 220px; }
+  .to-num { font-size: 22px; }
+
+  /* UNO button */
+  #uno-btn { font-size: 20px; padding: 8px 22px; }
+
+  /* "YOUR TURN" banner */
+  #player-zone.your-turn::before { font-size: 15px; }
+
+  .btn { font-size: 17px; padding: 8px 22px; }
+}
+
+/* ---------- Phone (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  :root {
+    --card-w: 58px;
+    --card-h: 87px;
+    --card-radius: 8px;
+  }
+
+  body { overflow-y: auto; }
+
+  #game-wrapper {
+    padding: 4px 4px;
+    gap: 2px;
+    min-height: 100vh;
+    height: auto;
+  }
+
+  /* Opponents side by side, center info stacked above */
+  .opponents-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .center-info {
+    order: -1;
+    flex-basis: 100%;
+    flex-direction: row;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  #direction-indicator { font-size: 16px; }
+  #status-msg { font-size: 14px; min-height: 20px; }
+
+  .opponent-zone { flex: 1; min-width: 0; }
+
+  .opponent-hand {
+    max-width: 170px;
+    padding-bottom: 38px;
+  }
+  .opponent-hand .card {
+    margin: 0 -12px -38px;
+  }
+
+  #center-area {
+    gap: 18px;
+    padding: 4px 0;
+  }
+
+  .pile-label { font-size: 10px; }
+
+  #draw-pile-wrapper,
+  #discard-pile-wrapper { gap: 4px; }
+
+  #color-indicator { width: 22px; height: 22px; border-width: 2px; margin-top: 2px; }
+
+  /* Player hand */
+  #hand-0 .card { margin: 0 -6px; }
+  #player-zone { padding-bottom: 4px; gap: 4px; }
+
+  .card .corner { font-size: 9px; }
+  .card .corner.tl { top: 3px; left: 5px; }
+  .card .corner.br { bottom: 3px; right: 5px; }
+  .card-center { font-size: 36px; }
+  .card-center.action-sym { font-size: 22px; }
+
+  .wild-circle { width: 32px; height: 32px; }
+  .wild-squares { gap: 2px; }
+  .ws { width: 14px; height: 14px; border-width: 1px; border-radius: 2px; }
+
+  .back-oval span { font-size: 10px; }
+  .back-oval { border-width: 2px; }
+
+  .card { border-width: 2px; box-shadow: 2px 2px 8px rgba(0,0,0,0.45); }
+
+  .name-tag { font-size: 11px; padding: 2px 8px 2px 6px; gap: 4px; }
+  .card-count-badge { width: 18px; height: 18px; font-size: 9px; top: -5px; right: -5px; }
+
+  /* Stop button — compact icon in top-right */
+  #stop-btn {
+    top: 4px;
+    right: 4px;
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 10px;
+  }
+
+  /* Overlays */
+  .color-choice { width: 52px; height: 52px; border-width: 3px; }
+  .color-choices { gap: 12px; }
+  #color-chooser h2 { font-size: 20px; }
+  #color-chooser { gap: 16px; }
+
+  .swap-choice { padding: 10px 18px; font-size: 14px; border-width: 2px; border-radius: 12px; }
+  .swap-choices { gap: 12px; }
+  #swap-chooser h2 { font-size: 20px; }
+  #swap-chooser { gap: 16px; }
+
+  #win-screen h1 { font-size: 32px; }
+  #trophy { font-size: 48px; }
+  #win-subtitle { font-size: 16px; }
+  #win-screen { gap: 14px; }
+
+  #turn-order-screen h2 { font-size: 22px; letter-spacing: 1px; }
+  .to-item { font-size: 15px; padding: 8px 16px; min-width: 180px; gap: 10px; }
+  .to-num { font-size: 18px; min-width: 20px; }
+  .to-first-badge { font-size: 9px; padding: 2px 6px; }
+  .to-hint { font-size: 11px; }
+  #turn-order-screen .btn { margin-top: 4px; }
+  #turn-order-screen { gap: 12px; }
+
+  /* UNO button */
+  #uno-btn { font-size: 18px; padding: 6px 18px; letter-spacing: 2px; }
+
+  /* "YOUR TURN" banner */
+  #player-zone.your-turn::before { font-size: 13px; letter-spacing: 1px; }
+
+  .btn { font-size: 15px; padding: 8px 18px; }
+
+  /* Playable card hover — smaller lift on touch */
+  .card.playable:hover {
+    transform: translateY(-8px) scale(1.05);
+  }
+
+  /* Active zone — less padding */
+  .opponent-zone.active-zone {
+    padding: 4px 4px;
+    border-radius: 8px;
+  }
+  .opponent-zone.active-zone::after { font-size: 11px; }
+}
+
+/* ---------- Very small phones (≤ 360px) ---------- */
+@media (max-width: 360px) {
+  :root {
+    --card-w: 50px;
+    --card-h: 75px;
+    --card-radius: 7px;
+  }
+
+  .opponent-hand { max-width: 140px; padding-bottom: 32px; }
+  .opponent-hand .card { margin: 0 -10px -32px; }
+
+  #center-area { gap: 12px; }
+
+  .card-center { font-size: 30px; }
+  .card-center.action-sym { font-size: 18px; }
+  .wild-circle { width: 26px; height: 26px; }
+  .ws { width: 12px; height: 12px; }
+
+  .card .corner { font-size: 8px; }
+  .card .corner.tl { top: 2px; left: 4px; }
+  .card .corner.br { bottom: 2px; right: 4px; }
+
+  #status-msg { font-size: 12px; }
+}
+
+/* ---------- Landscape on short screens ---------- */
+@media (max-height: 500px) {
+  #game-wrapper { gap: 0; padding: 2px 8px; }
+  .opponents-row { gap: 0; }
+  #center-area { padding: 0; flex: 1; }
+  #player-zone { padding-bottom: 2px; gap: 2px; }
+  #player-zone.your-turn::before { display: none; }
+  .opponent-zone.active-zone::after { display: none; }
+}
