@@ -101,7 +101,7 @@ export const applyCardEffect = (card, playerIdx) => {
     case 'Skip': {
       const skipped = nextIdx(playerIdx);
       gs.currentPlayer = nextIdx(skipped);
-      return `${names[skipped]} is skipped!`;
+      return skipped === 0 ? 'You are skipped!' : `${names[skipped]} is skipped!`;
     }
     case 'Reverse': {
       gs.direction *= -1;
@@ -121,7 +121,9 @@ export const applyCardEffect = (card, playerIdx) => {
       drawN(victim, 4);
       gs.currentPlayer = nextIdx(victim);
       gs.forcedDraw = { victim, count: 4 };
-      return `${names[victim]} draws 4 and is skipped!`;
+      return victim === 0
+        ? 'You draw 4 and are skipped!'
+        : `${names[victim]} draws 4 and is skipped!`;
     }
     case 'Swap Hands': {
       const target = gs.swapTarget ?? nextIdx(playerIdx);

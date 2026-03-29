@@ -32,6 +32,7 @@ export const doAITurn = (onTurnEnd, onWin) => {
       gs.pendingDraw = 0;
       drawN(idx, count);
       setStatus(`${gs.playerNames[idx]} draws ${count} cards!`);
+      renderAll();
       gs.animating = true;
       animateDrawN(idx, count, () => {
         gs.animating = false;
@@ -49,7 +50,8 @@ export const doAITurn = (onTurnEnd, onWin) => {
         renderAll();
         const drawn = gs.hands[idx][gs.hands[idx].length - 1];
         if (canPlay(drawn)) {
-          setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1400);
+          setStatus(`${gs.playerNames[idx]} drew a playable card…`);
+          setTimeout(() => _aiPlayCard(idx, drawn, onTurnEnd, onWin), 1800);
         } else {
           gs.currentPlayer = nextIdx(idx);
           renderAll();
