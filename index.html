@@ -16,6 +16,24 @@
 </head>
 <body>
 
+<!-- Mode selection screen -->
+<div id="mode-select-screen">
+  <h1 class="mode-title">UNO</h1>
+  <h2 class="mode-subtitle">Choose Game Mode</h2>
+  <div class="mode-choices">
+    <button class="mode-choice" onclick="selectMode('standard')">
+      <span class="mode-icon">🃏</span>
+      <span class="mode-name">Standard</span>
+      <span class="mode-desc">Classic UNO rules</span>
+    </button>
+    <button class="mode-choice" onclick="selectMode('noMercy')">
+      <span class="mode-icon">🔥</span>
+      <span class="mode-name">No Mercy</span>
+      <span class="mode-desc">New cards, stacking, elimination at 25</span>
+    </button>
+  </div>
+</div>
+
 <div id="game-wrapper">
 
   <!-- Opponents row -->

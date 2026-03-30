@@ -6,7 +6,8 @@
  */
 
 import { gs } from './state.js';
-import { canPlay, drawN, nextIdx, playCardCore } from './rules.js';
+import { canPlay, drawN, nextIdx, playCardCore,
+         resolveDrawColor, checkElimination }    from './rules.js';
 import { renderAll, setStatus } from './render.js';
 import { animateAIPlay, animateDraw, animateDrawN } from './animate.js';
 import { sndFlip, sndUno } from './audio.js';
@@ -19,8 +20,35 @@ import { COLORS } from './deck.js';
  */
 export const doAITurn = (onTurnEnd, onWin) => {
   if (gs.phase === 'gameOver' || gs.currentPlayer === 0) return;
+  if (gs.eliminated[gs.currentPlayer]) return;
 
-  const idx      = gs.currentPlayer;
+  const idx = gs.currentPlayer;
+
+  // ── Wild Draw Color resolution (No Mercy) ───────────────
+  if (gs.pendingDrawColor) {
+    const count = resolveDrawColor(idx);
+    setStatus(`${gs.playerNames[idx]} draws ${count} cards for Wild Draw Color!`);
+    renderAll();
+    gs.animating = true;
+    animateDrawN(idx, count, () => {
+      gs.animating = false;
+      renderAll();
+      const elimResult = checkElimination(idx);
+      if (typeof elimResult === 'number' && elimResult >= 0) {
+        onWin(elimResult);
+      } else if (elimResult === -2) {
+        setStatus(`${gs.playerNames[idx]} is eliminated!`);
+        renderAll();
+        setTimeout(onTurnEnd, 1500);
+      } else {
+        gs.currentPlayer = nextIdx(idx);
+        renderAll();
+        setTimeout(onTurnEnd, 1100);
+      }
+    });
+    return;
+  }
+
   const playable = gs.hands[idx].filter(canPlay);
 
   if (playable.length === 0) {
@@ -36,9 +64,19 @@ export const doAITurn = (onTurnEnd, onWin) => {
       gs.animating = true;
       animateDrawN(idx, count, () => {
         gs.animating = false;
-        gs.currentPlayer = nextIdx(idx);
         renderAll();
-        setTimeout(onTurnEnd, 1100);
+        const elimResult = checkElimination(idx);
+        if (typeof elimResult === 'number' && elimResult >= 0) {
+          onWin(elimResult);
+        } else if (elimResult === -2) {
+          setStatus(`${gs.playerNames[idx]} is eliminated!`);
+          renderAll();
+          setTimeout(onTurnEnd, 1500);
+        } else {
+          gs.currentPlayer = nextIdx(idx);
+          renderAll();
+          setTimeout(onTurnEnd, 1100);
+        }
       });
     } else {
       // Draw one card and check if playable
@@ -68,17 +106,26 @@ export const doAITurn = (onTurnEnd, onWin) => {
 
 // ── Card selection strategy ──────────────────────────────────
 
-/**
- * Choose the best card to play from a list of valid options.
- * Prefers action cards; saves wilds; plays aggressively when opponents are close to winning.
- */
 const _pickBestCard = (playable, idx) => {
-  const opponents   = [0, 1, 2].filter(i => i !== idx);
+  const opponents   = [0, 1, 2].filter(i => i !== idx && !(gs.eliminated[i]));
   const minOpCards  = Math.min(...opponents.map(i => gs.hands[i].length));
+
+  // In No Mercy, prefer Discard All when we have many cards of that color
+  if (gs.mode === 'noMercy') {
+    const discardAll = playable.find(c => c.value === 'Discard All');
+    if (discardAll) {
+      const sameColor = gs.hands[idx].filter(c => c.color === discardAll.color).length;
+      if (sameColor >= 3) return discardAll;
+    }
+  }
 
   // Go aggressive when an opponent is close to winning
   if (minOpCards <= 3) {
-    const priority = ['Wild Draw Four', 'Draw Two', 'Skip', 'Reverse', 'Wild'];
+    const priority = gs.mode === 'noMercy'
+      ? ['Wild Draw 10', 'Wild Draw Color', 'Wild Draw 6', 'Wild Draw Four',
+         'Draw Two', 'Skip Everyone', 'Skip', 'Reverse Draw Four', 'Reverse',
+         'Wild Forced Swap', 'Wild']
+      : ['Wild Draw Four', 'Draw Two', 'Skip', 'Reverse', 'Wild'];
     for (const val of priority) {
       const c = playable.find(c => c.value === val);
       if (c) return c;
@@ -104,7 +151,9 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
 
   animateAIPlay(idx, card.id, () => {
     const chosenColor = card.type === 'wild' ? _pickColor(idx) : null;
-    if (card.value === 'Swap Hands') gs.swapTarget = _pickSwapTarget(idx);
+    if (card.value === 'Swap Hands' || card.value === 'Wild Forced Swap') {
+      gs.swapTarget = _pickSwapTarget(idx);
+    }
     const { winner, msg } = playCardCore(idx, card.id, chosenColor);
 
     gs.animating = false;
@@ -127,7 +176,16 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
       animateDrawN(victim, count, () => {
         gs.animating = false;
         renderAll();
-        setTimeout(onTurnEnd, 900);
+        const elimResult = checkElimination(victim);
+        if (typeof elimResult === 'number' && elimResult >= 0) {
+          onWin(elimResult);
+        } else if (elimResult === -2) {
+          setStatus(`${gs.playerNames[victim]} is eliminated!`);
+          renderAll();
+          setTimeout(onTurnEnd, 1500);
+        } else {
+          setTimeout(onTurnEnd, 900);
+        }
       });
     } else {
       setTimeout(onTurnEnd, 900);
@@ -137,7 +195,7 @@ const _aiPlayCard = (idx, card, onTurnEnd, onWin) => {
 
 /** Pick the opponent to swap with — target whoever has the fewest cards */
 const _pickSwapTarget = idx => {
-  const opponents = [0, 1, 2].filter(i => i !== idx);
+  const opponents = [0, 1, 2].filter(i => i !== idx && !(gs.eliminated[i]));
   return opponents.reduce((best, i) =>
     gs.hands[i].length < gs.hands[best].length ? i : best
   , opponents[0]);

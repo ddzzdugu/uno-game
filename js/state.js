@@ -6,7 +6,7 @@
  * module always sees current state without re-importing.
  */
 
-import { buildDeck, shuffle, COLORS } from './deck.js';
+import { buildDeck, buildNoMercyDeck, shuffle, COLORS } from './deck.js';
 
 /**
  * gs — the single source of truth for all game state.
@@ -26,8 +26,8 @@ import { buildDeck, shuffle, COLORS } from './deck.js';
  */
 export const gs = {};
 
-export const initGame = () => {
-  const deck = shuffle(buildDeck());
+export const initGame = (mode = 'standard') => {
+  const deck = shuffle(mode === 'noMercy' ? buildNoMercyDeck() : buildDeck());
 
   // Deal 7 cards to each of the 3 players
   const hands = [[], [], []];
@@ -42,6 +42,7 @@ export const initGame = () => {
   }
 
   const next = {
+    mode,
     deck,
     discardPile: [startCard],
     hands,
@@ -56,6 +57,9 @@ export const initGame = () => {
     pendingDraw: 0,
     swapTarget: null,
     drewThisTurn: false,
+    // No Mercy extras
+    eliminated: [false, false, false],
+    pendingDrawColor: null,
   };
 
   // Reset in-place so all module references stay valid

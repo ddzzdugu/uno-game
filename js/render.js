@@ -12,7 +12,15 @@ const COLOR_HEX = {
   yellow: '#d4b830', wild: '#1a1a1a',
 };
 
-const ACTION_SYMBOL = { Skip: '⊘', Reverse: '↺', 'Draw Two': '+2' };
+const ACTION_SYMBOL = {
+  Skip: '⊘', Reverse: '↺', 'Draw Two': '+2',
+  'Skip Everyone': '⊘⊘', 'Reverse Draw Four': '↺+4', 'Discard All': '✕ALL',
+};
+
+const WILD_SQUARES_HTML = `<div class="wild-squares">
+  <div class="ws ws-r"></div><div class="ws ws-b"></div>
+  <div class="ws ws-y"></div><div class="ws ws-g"></div>
+</div>`;
 
 // ── Card element factory ─────────────────────────────────────
 
@@ -38,13 +46,19 @@ export const makeCardEl = (card, { faceDown = false, humanPlayable = false } = {
   if (card.type === 'wild') {
     if (card.value === 'Wild Draw Four') {
       cornerText = '+4';
-      centerHtml = `<div class="wild-squares">
-        <div class="ws ws-r"></div><div class="ws ws-b"></div>
-        <div class="ws ws-y"></div><div class="ws ws-g"></div>
-      </div>`;
-    } else if (card.value === 'Swap Hands') {
+      centerHtml = WILD_SQUARES_HTML;
+    } else if (card.value === 'Swap Hands' || card.value === 'Wild Forced Swap') {
       cornerText = '🔄';
       centerHtml = `<div class="card-center action-sym" style="font-size:1.8em;line-height:1">🔄</div>`;
+    } else if (card.value === 'Wild Draw 6') {
+      cornerText = '+6';
+      centerHtml = WILD_SQUARES_HTML;
+    } else if (card.value === 'Wild Draw 10') {
+      cornerText = '+10';
+      centerHtml = WILD_SQUARES_HTML;
+    } else if (card.value === 'Wild Draw Color') {
+      cornerText = '+?';
+      centerHtml = `<div class="wild-circle"></div>`;
     } else {
       cornerText = '🌈';
       centerHtml = `<div class="wild-circle"></div>`;
@@ -72,6 +86,13 @@ export const makeCardEl = (card, { faceDown = false, humanPlayable = false } = {
 export const renderHand = (playerIdx, handElId, faceDown) => {
   const handEl = document.getElementById(handElId);
   handEl.innerHTML = '';
+  if (gs.eliminated[playerIdx]) {
+    const label = document.createElement('div');
+    label.className = 'eliminated-label';
+    label.textContent = 'ELIMINATED';
+    handEl.appendChild(label);
+    return;
+  }
   gs.hands[playerIdx].forEach(card => {
     const playable = !faceDown && isHumanPlayable(card);
     const el = makeCardEl(card, { faceDown, humanPlayable: playable });
@@ -118,7 +139,7 @@ export const renderDiscardTop = () => {
 export const updateBadges = () => {
   for (let i = 0; i < 3; i++) {
     const b = document.getElementById(`badge-${i}`);
-    if (b) b.textContent = gs.hands[i].length;
+    if (b) b.textContent = (gs.eliminated[i]) ? 'OUT' : gs.hands[i].length;
   }
   const dc = document.getElementById('deck-count');
   if (dc) dc.textContent = gs.deck.length;
@@ -129,10 +150,14 @@ export const updateBadges = () => {
 export const updateNameTagHighlights = () => {
   const isPlaying = gs.phase === 'playing';
   for (let i = 0; i < 3; i++) {
-    const active = i === gs.currentPlayer && isPlaying;
+    const elim = gs.eliminated[i];
+    const active = i === gs.currentPlayer && isPlaying && !elim;
     const tag  = document.getElementById(`nametag-${i}`);
     const zone = document.getElementById(i === 0 ? 'player-zone' : `zone-${i}`);
-    if (tag)  tag.classList.toggle('active-turn', active);
+    if (tag) {
+      tag.classList.toggle('active-turn', active);
+      tag.classList.toggle('eliminated', !!elim);
+    }
     if (zone) {
       zone.classList.toggle('active-zone', active);
       // Set zone color so ::after "thinking…" inherits it via currentColor

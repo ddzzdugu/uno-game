@@ -5,7 +5,8 @@
 
 import { gs, initGame }                           from './state.js';
 import { applyStartCardEffect, isHumanPlayable,
-         canPlay, drawN, nextIdx, playCardCore }  from './rules.js';
+         canPlay, drawN, nextIdx, playCardCore,
+         resolveDrawColor, checkElimination }      from './rules.js';
 import { renderAll, setStatus, updateNameTagHighlights,
          showUnoBadge, hideUnoBadge,
          showColorChooser, hideColorChooser,
@@ -20,11 +21,38 @@ import { sndUno, sndWin }                         from './audio.js';
 const scheduleTurn = () => {
   if (gs.phase === 'gameOver') return;
 
+  // ── Wild Draw Color resolution for human player ─────────
+  if (gs.currentPlayer === 0 && gs.pendingDrawColor) {
+    const color = gs.pendingDrawColor;
+    const count = resolveDrawColor(0);
+    setStatus(`You draw ${count} cards until you get ${color}!`);
+    renderAll();
+    gs.animating = true;
+    animateDrawN(0, count, () => {
+      gs.animating = false;
+      renderAll();
+      updateNameTagHighlights();
+      const elimResult = checkElimination(0);
+      if (typeof elimResult === 'number' && elimResult >= 0) {
+        showWinScreen(elimResult);
+      } else if (elimResult === -2) {
+        showEliminatedScreen();
+      } else {
+        gs.currentPlayer = nextIdx(0);
+        renderAll();
+        updateNameTagHighlights();
+        scheduleTurn();
+      }
+    });
+    return;
+  }
+
   if (gs.currentPlayer === 0) {
     gs.drewThisTurn = false;
-    setStatus(gs.pendingDraw > 0
-      ? `You must draw ${gs.pendingDraw} cards or stack a +2!`
-      : 'Your turn!');
+    const stackMsg = gs.mode === 'noMercy'
+      ? `You must draw ${gs.pendingDraw} cards or stack a draw card!`
+      : `You must draw ${gs.pendingDraw} cards or stack a +2!`;
+    setStatus(gs.pendingDraw > 0 ? stackMsg : 'Your turn!');
     renderAll();
     updateNameTagHighlights();
   } else {
@@ -39,7 +67,6 @@ const scheduleTurn = () => {
 
 // ── Human player actions ─────────────────────────────────────
 
-/** Called by render.js via window.onCardClick when the human clicks a card */
 window.onCardClick = cardId => {
   if (gs.currentPlayer !== 0 || gs.phase !== 'playing' || gs.animating) return;
   const card = gs.hands[0].find(c => c.id === cardId);
@@ -47,9 +74,8 @@ window.onCardClick = cardId => {
 
   if (card.type === 'wild') {
     gs.pendingWild = cardId;
-    if (card.value === 'Swap Hands') {
-      document.getElementById('swap-choice-1').textContent = `🤖 ${gs.playerNames[1]}`;
-      document.getElementById('swap-choice-2').textContent = `🤖 ${gs.playerNames[2]}`;
+    if (card.value === 'Swap Hands' || card.value === 'Wild Forced Swap') {
+      _populateSwapChooser();
       showSwapChooser();
     } else {
       showColorChooser();
@@ -59,14 +85,25 @@ window.onCardClick = cardId => {
   }
 };
 
-/** Called from the swap-chooser overlay buttons in index.html */
+/** Populate swap chooser, hiding eliminated players */
+const _populateSwapChooser = () => {
+  for (let i = 1; i <= 2; i++) {
+    const btn = document.getElementById(`swap-choice-${i}`);
+    btn.textContent = `🤖 ${gs.playerNames[i]}`;
+    if (gs.eliminated[i]) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = '';
+    }
+  }
+};
+
 window.chooseSwap = targetIdx => {
   hideSwapChooser();
   gs.swapTarget = targetIdx;
   showColorChooser();
 };
 
-/** Called from the color-chooser overlay buttons in index.html */
 window.chooseColor = color => {
   hideColorChooser();
   if (gs.pendingWild === null) return;
@@ -97,8 +134,19 @@ const _startHumanPlay = (cardId, chosenColor) => {
         gs.animating = true;
         animateDrawN(victim, count, () => {
           gs.animating = false;
-          updateNameTagHighlights();
-          scheduleTurn();
+          renderAll();
+          const elimResult = checkElimination(victim);
+          if (typeof elimResult === 'number' && elimResult >= 0) {
+            showWinScreen(elimResult);
+          } else if (elimResult === -2) {
+            setStatus(`${gs.playerNames[victim]} is eliminated!`);
+            renderAll();
+            updateNameTagHighlights();
+            setTimeout(scheduleTurn, 1500);
+          } else {
+            updateNameTagHighlights();
+            scheduleTurn();
+          }
         });
       } else {
         updateNameTagHighlights();
@@ -125,13 +173,20 @@ const onDrawPileClick = () => {
     renderAll();
     animateDrawN(0, count, () => {
       gs.animating = false;
-      gs.currentPlayer = nextIdx(0);
       renderAll();
-      updateNameTagHighlights();
-      scheduleTurn();
+      const elimResult = checkElimination(0);
+      if (typeof elimResult === 'number' && elimResult >= 0) {
+        showWinScreen(elimResult);
+      } else if (elimResult === -2) {
+        showEliminatedScreen();
+      } else {
+        gs.currentPlayer = nextIdx(0);
+        renderAll();
+        updateNameTagHighlights();
+        scheduleTurn();
+      }
     });
   } else if (gs.drewThisTurn) {
-    // Already drew — pass turn
     gs.drewThisTurn = false;
     gs.currentPlayer = nextIdx(0);
     renderAll();
@@ -158,7 +213,6 @@ const onDrawPileClick = () => {
   }
 };
 
-/** Called from the UNO button in index.html */
 window.callUno = () => {
   if (gs.phase !== 'playing') return;
   if (gs.hands[0].length === 1 && !gs.unoCalled[0]) {
@@ -171,7 +225,6 @@ window.callUno = () => {
 
 // ── Stop game ────────────────────────────────────────────────
 
-/** Called from the Stop button */
 window.stopGame = () => {
   if (gs.phase !== 'playing') return;
   gs.phase = 'gameOver';
@@ -180,23 +233,38 @@ window.stopGame = () => {
   document.getElementById('win-screen').classList.add('visible');
 };
 
-// ── Win screen ───────────────────────────────────────────────
+// ── Win / elimination screens ────────────────────────────────
 
 const showWinScreen = winnerIdx => {
   const name = gs.playerNames[winnerIdx];
-  document.getElementById('win-title').textContent    = winnerIdx === 0 ? 'You Win! 🎉' : `${name} Wins!`;
-  document.getElementById('win-subtitle').textContent = winnerIdx === 0 ? 'Congratulations! 🎊' : 'Better luck next time!';
+  const isNoMercy = gs.mode === 'noMercy';
+  if (winnerIdx === 0) {
+    document.getElementById('win-title').textContent    = 'You Win! 🎉';
+    document.getElementById('win-subtitle').textContent = isNoMercy ? 'Last one standing! 🎊' : 'Congratulations! 🎊';
+  } else {
+    document.getElementById('win-title').textContent    = `${name} Wins!`;
+    document.getElementById('win-subtitle').textContent = 'Better luck next time!';
+  }
   document.getElementById('win-screen').classList.add('visible');
   sndWin();
   launchConfetti();
   launchFireworks();
 };
 
-/** Called from the "Play Again" button in index.html */
+const showEliminatedScreen = () => {
+  gs.phase = 'gameOver';
+  document.getElementById('win-title').textContent    = 'You\'re Eliminated!';
+  document.getElementById('win-subtitle').textContent = '25 cards — no mercy!';
+  document.getElementById('win-screen').classList.add('visible');
+};
+
 window.restartGame = () => {
   document.getElementById('win-screen').classList.remove('visible');
   hideUnoBadge();
-  startGame();
+  // Go back to mode select
+  document.getElementById('game-wrapper').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'none';
+  document.getElementById('mode-select-screen').style.display = '';
 };
 
 // ── Turn order intro ─────────────────────────────────────────
@@ -213,7 +281,11 @@ const showTurnOrder = () => {
     nextIdx(gs.currentPlayer, 2),
   ];
 
-  document.getElementById('turn-order-list').innerHTML = seq.map((pid, pos) => `
+  // Show mode badge in turn order screen
+  const modeLabel = gs.mode === 'noMercy' ? '🔥 No Mercy' : '🃏 Standard';
+  document.getElementById('turn-order-list').innerHTML =
+    `<div class="to-mode-badge">${modeLabel}</div>` +
+    seq.map((pid, pos) => `
     <div class="to-item" style="color:${PLAYER_COLORS[pid]}">
       <span class="to-num">${pos + 1}</span>
       <span>${PLAYER_ICONS[pid]} ${gs.playerNames[pid]}</span>
@@ -240,10 +312,19 @@ const _dismissTurnOrder = () => {
 };
 window.dismissTurnOrder = _dismissTurnOrder;
 
+// ── Mode selection ───────────────────────────────────────────
+
+window.selectMode = (mode) => {
+  document.getElementById('mode-select-screen').style.display = 'none';
+  document.getElementById('game-wrapper').style.display = '';
+  document.getElementById('stop-btn').style.display = '';
+  startGame(mode);
+};
+
 // ── Boot ─────────────────────────────────────────────────────
 
-const startGame = () => {
-  initGame();
+const startGame = (mode) => {
+  initGame(mode);
   applyStartCardEffect(gs.discardPile[0]);
   renderAll();
   updateNameTagHighlights();
@@ -252,4 +333,6 @@ const startGame = () => {
 
 document.getElementById('draw-pile').addEventListener('click', onDrawPileClick);
 
-startGame();
+// Show mode select on load (don't auto-start)
+document.getElementById('game-wrapper').style.display = 'none';
+document.getElementById('stop-btn').style.display = 'none';

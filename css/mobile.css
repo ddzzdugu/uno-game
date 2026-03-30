@@ -82,6 +82,13 @@
   #player-zone.your-turn::before { font-size: 15px; }
 
   .btn { font-size: 17px; padding: 8px 22px; }
+
+  /* Mode select */
+  #mode-select-screen .mode-title { font-size: 56px; }
+  #mode-select-screen .mode-subtitle { font-size: 22px; }
+  .mode-choice { padding: 24px 30px; }
+  .mode-icon { font-size: 42px; }
+  .mode-name { font-size: 22px; }
 }
 
 /* ---------- Phone (≤ 480px) ---------- */
@@ -215,6 +222,15 @@
     border-radius: 8px;
   }
   .opponent-zone.active-zone::after { font-size: 11px; }
+
+  /* Mode select */
+  #mode-select-screen .mode-title { font-size: 42px; letter-spacing: 3px; }
+  #mode-select-screen .mode-subtitle { font-size: 18px; }
+  .mode-choices { flex-direction: column; gap: 16px; }
+  .mode-choice { padding: 18px 28px; flex-direction: row; gap: 14px; border-radius: 16px; }
+  .mode-icon { font-size: 36px; }
+  .mode-name { font-size: 20px; }
+  .mode-desc { font-size: 12px; text-align: left; max-width: none; }
 }
 
 /* ---------- Very small phones (≤ 360px) ---------- */
