@@ -48,8 +48,11 @@ export const makeCardEl = (card, { faceDown = false, humanPlayable = false } = {
       cornerText = '+4';
       centerHtml = WILD_SQUARES_HTML;
     } else if (card.value === 'Swap Hands' || card.value === 'Wild Forced Swap') {
-      cornerText = '🔄';
-      centerHtml = `<div class="card-center action-sym" style="font-size:1.8em;line-height:1">🔄</div>`;
+      cornerText = '⇄';
+      centerHtml = `<div class="swap-hands-face">
+        <div class="swap-ring"><span class="swap-icon">⇄</span></div>
+        <span class="swap-badge">${card.value === 'Wild Forced Swap' ? 'FORCED' : 'SWAP'}</span>
+      </div>`;
     } else if (card.value === 'Wild Draw 6') {
       cornerText = '+6';
       centerHtml = WILD_SQUARES_HTML;

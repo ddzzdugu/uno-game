@@ -42,6 +42,9 @@
 
   .wild-circle { width: 44px; height: 44px; }
   .ws { width: 18px; height: 18px; }
+  .swap-ring { width: 44px; height: 44px; }
+  .swap-icon { width: 29px; height: 29px; font-size: 15px; }
+  .swap-badge { font-size: 9px; }
 
   .back-oval span { font-size: 13px; }
 
@@ -161,6 +164,9 @@
   .wild-circle { width: 32px; height: 32px; }
   .wild-squares { gap: 2px; }
   .ws { width: 14px; height: 14px; border-width: 1px; border-radius: 2px; }
+  .swap-ring { width: 32px; height: 32px; }
+  .swap-icon { width: 20px; height: 20px; font-size: 11px; }
+  .swap-badge { font-size: 7px; letter-spacing: 1px; }
 
   .back-oval span { font-size: 10px; }
   .back-oval { border-width: 2px; }
@@ -250,6 +256,9 @@
   .card-center.action-sym { font-size: 18px; }
   .wild-circle { width: 26px; height: 26px; }
   .ws { width: 12px; height: 12px; }
+  .swap-ring { width: 26px; height: 26px; }
+  .swap-icon { width: 17px; height: 17px; font-size: 9px; }
+  .swap-badge { font-size: 6px; }
 
   .card .corner { font-size: 8px; }
   .card .corner.tl { top: 2px; left: 4px; }

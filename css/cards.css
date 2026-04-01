@@ -95,6 +95,48 @@
   z-index: 2;
 }
 
+/* ── Swap Hands card ── */
+.swap-hands-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+}
+.swap-ring {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #c94455  0deg   90deg,
+    #4a7ec0 90deg  180deg,
+    #d4b830 180deg 270deg,
+    #3d9b5a 270deg 360deg
+  );
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.swap-icon {
+  width: 36px;
+  height: 36px;
+  background: #1a1a1a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+}
+.swap-badge {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 0 6px rgba(255,255,255,0.3);
+}
+
 /* ── Wild Draw Four 2×2 squares ── */
 .wild-squares {
   display: grid;
